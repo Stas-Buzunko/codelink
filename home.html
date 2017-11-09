@@ -40,19 +40,28 @@
 
     <script type="text/javascript" src="src/brython_stdlib.js"></script>
 
-    <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
+ <!--    <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
     <script src="ace/mode-python3.js" type="text/javascript" charset="utf-8"></script>
-    <script src="ace/snippets/python.js" type="text/javascript" charset="utf-8"></script>
+    <script src="ace/snippets/python.js" type="text/javascript" charset="utf-8"></script> -->
+    <script src="https://fb.me/react-15.1.0.js"></script>
+    <script src="https://fb.me/react-dom-15.1.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.0.4/redux.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/4.0.0/react-redux.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-ace/5.4.0/react-ace.js"></script>
+    <script src="https://cdn.jsdelivr.net/lodash/4/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
 
-    <script type="text/python3" id="tests_editor">
+
+   <!--  <script type="text/python3" id="tests_editor">
         from browser import document as doc, window
         from browser import html
         import editor, editor2
 
         doc['run2'].bind('click',editor2.run)
 
-    </script>
+    </script> -->
+
 
     <script>
         function run_js(){
@@ -64,10 +73,12 @@
             console.log("Javascript code run in "+(t1-t0)+" ms")
         }
     </script>
+    <script type="text/babel" src="src/editor.js">
+
+    </script>
 
 </head>
 <body onload="brython({debug:1})">
-
     <nav class="navbar navbar-default" role="navigation">
         <div class="navbar-header">
             <a class="navbar-brand" href="#">Python Run</a>
@@ -78,34 +89,6 @@
         </div>
     </nav>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6">
-                <h4>User Code</h4>
-                <div id="container">
-                    <div id="editor" class="editor" style="width: 100%"></div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="row">
-                    <div class="col-lg-8"><h4>Output Console</h4> </div>
-                    <div class="col-lg-4 text-right"><button id="run2" class="btn btn-success">Run</button></div>
-                </div>
-                <div style="width:100%; height: 340px;">
-                <textarea id="console" autocomplete="off" style="height: 100%"></textarea>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6">
-                <h4>Testing Code</h4>
-                <div id="container2">
-                    <div id="editor2" class="editor" style="width: 100%"></div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-            </div>
-        </div>
-    </div>
+    <div id="root" />
 </body>
 </html>
