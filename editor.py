@@ -4,8 +4,7 @@ import traceback
 import javascript
 
 from browser import document as doc, window, alert
-#import editor as edit
-edit = window.userCode
+
 store = window.store
 output = ''
 # set height of container to 66% of screen
