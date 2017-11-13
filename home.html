@@ -61,7 +61,27 @@
         doc['run2'].bind('click',editor2.run)
 
     </script> -->
+<!-- global output
+        doc["console"].value = ''
+        src = editor.getValue()
+        first = edit.returnValue()
+        first += "\n\n\n"
+        first +=src
+        if storage is not None:
+           storage["py_src2"] = src
 
+        t0 = time.perf_counter()
+        try:
+            ns = {'__name__':'__main__'}
+            exec(first, ns)
+            state = 1
+        except Exception as exc:
+            traceback.print_exc(file=sys.stderr)
+            state = 0
+        output = doc["console"].value
+
+        print('<completed in %6.2f ms>' % ((time.perf_counter() - t0) * 1000.0))
+        return state -->
 
     <script>
         function run_js(){
@@ -73,7 +93,21 @@
             console.log("Javascript code run in "+(t1-t0)+" ms")
         }
     </script>
+    
     <script type="text/babel" src="src/editor.js"></script>
+    <!-- super function goes here -->
+    <!--
+    run code for each input
+    bind function to button -->
+
+    <script type="text/python3" id="tests_editor">
+      from browser import document as doc, window
+      from browser import html
+      import  editor
+
+      doc['run-button'].bind('click', editor.run)
+
+  </script>
 
 </head>
 <body onload="brython({debug:1})">
@@ -87,6 +121,9 @@
         </div>
     </nav>
 
+    <button id="run-button" style="display:none"></button>
     <div id="root" />
+
+    
 </body>
 </html>

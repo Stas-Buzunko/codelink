@@ -1,8 +1,34 @@
-        window.define = ace.define
-        const userCode = (state="//No code yet", action) => {
+const initialState = {
+  values: [],
+  runFromIndex: null,
+  results: []
+}
+window.define = ace.define
+const userCode = (state = initialState, action) => {
   switch(action.type){
-     case('UPDATE_CODE'):      
-      return action.code
+    case('UPDATE_CODE'):    
+      return {
+        ...state,
+        values: [
+          ...state.values.slice(0, action.index),
+          action.value,
+          ...state.values.slice(action.index + 1)
+        ]
+      }
+    case('UPDATE_INDEX'):
+      return {
+        ...state,
+        runFromIndex: action.index
+      }
+    case('UPDATE_RESULTS'):
+      return {
+        ...state,
+        results: [
+          ...state.results.slice(0, action.index),
+          action.value,
+          ...state.results.slice(action.index + 1)
+        ]
+      }
     default:
       return state;
   }  
@@ -413,23 +439,8 @@ const store = Redux.createStore(editorApp);
 const ReactAce2 = ReactAce.default;
 
 class Editor extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      code:'',
-      isRunning: false,
-    }
-    this.onChange = this.onChange.bind(this);
-  }
-
-  onChange(event){
-    this.setState({code:event});
-    this.props.onStop()
-  }
-
  render(){
-   const { userCode, isRunning, onRun } = this.props;
-   const { code } = this.state
+   const { onRun, index, onChange, value, result } = this.props;
 
    return (
         <div className="col-lg-12" style={{marginTop: '20px'}}>
@@ -439,8 +450,8 @@ class Editor extends React.Component{
                         <AceEditor
                             mode="python"
                             theme="dracula"
-                            value={code}
-                            onChange={this.onChange}
+                            value={value}
+                            onChange={onChange}
                             editorProps={{$blockScrolling: true}}
                             minLines={4}
                             maxLines={4}
@@ -450,12 +461,9 @@ class Editor extends React.Component{
                 </div>
                 <div className="row" style={{padding: 0, marginTop: '10px'}}>
                     <div className="col-lg-8" style={{paddingLeft: 0}}>
-                        <pre style={{height: '100%'}}>
-                            { isRunning &&
-                                <pre>{code}</pre>
-                            }
-                                
-                        </pre>
+                      <pre id={`editor-result-${index}`} style={{height: '100%'}}>
+                        {result}
+                      </pre>
                     </div>
                     <div className="col-lg-4">
                         <button
@@ -474,30 +482,34 @@ class Editor extends React.Component{
 const numberOfInputs = 2
 
 class CodeApp extends React.Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            isRunning: false,
-            runFromIndex: 0
-        }
+    componentWillReceiveProps(nextProps) {
+      if (this.props.userCode.runFromIndex !== nextProps.userCode.runFromIndex && nextProps.userCode.runFromIndex !== null) {
+        document.getElementById('run-button').click();
+      }
     }
 
     onRun = index => {
-        this.setState({ isRunning: true, runFromIndex: index })
+      store.dispatch({ type: 'UPDATE_INDEX', index });
+    }
+
+    onChange = (value, index) => {
+      store.dispatch({ value, type: 'UPDATE_CODE', index });
     }
 
     render() {
-        const { runFromIndex, isRunning } = this.state
+        const { values, results } = this.props.userCode
 
         return (
             <div className="container">
                 {Array.from(Array(numberOfInputs).keys()).map(number =>
                     <Editor
-                        key={number}
-                        isRunning={isRunning && runFromIndex >= number}
-                        onRun={() => this.onRun(number)}
-                        onStop={() => this.setState({ isRunning: false })} />
+                      value={values[number]}
+                      result={results[number]}
+                      onChange={value => this.onChange(value, number)}
+                      index={number}
+                      key={number}
+                      onRun={() => this.onRun(number)}
+                      onStop={() => this.setState({ isRunning: false })} />
                 )}
             </div>
         )
