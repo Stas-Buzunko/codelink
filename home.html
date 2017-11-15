@@ -114,7 +114,8 @@
                   ...state.results.slice(0, action.index),
                   action.value,
                   ...state.results.slice(action.index + 1)
-                ]
+                ],
+                runFromIndex: null
               }
             default:
               return state;
