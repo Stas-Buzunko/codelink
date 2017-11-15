@@ -432,7 +432,8 @@ const { combineReducers } = Redux;
 const editorApp = combineReducers({
   userCode:userCode
 })
-const store = Redux.createStore(editorApp);
+
+window.store = Redux.createStore(editorApp);
 
 
 
