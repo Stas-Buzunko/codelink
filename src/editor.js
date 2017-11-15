@@ -1,38 +1,3 @@
-const initialState = {
-  values: [],
-  runFromIndex: null,
-  results: []
-}
-window.define = ace.define
-const userCode = (state = initialState, action) => {
-  switch(action.type){
-    case('UPDATE_CODE'):    
-      return {
-        ...state,
-        values: [
-          ...state.values.slice(0, action.index),
-          action.value,
-          ...state.values.slice(action.index + 1)
-        ]
-      }
-    case('UPDATE_INDEX'):
-      return {
-        ...state,
-        runFromIndex: action.index
-      }
-    case('UPDATE_RESULTS'):
-      return {
-        ...state,
-        results: [
-          ...state.results.slice(0, action.index),
-          action.value,
-          ...state.results.slice(action.index + 1)
-        ]
-      }
-    default:
-      return state;
-  }  
-};
 ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/');
 const editorOptions = [
     'minLines',
@@ -427,15 +392,6 @@ AceEditor.defaultProps = {
   enableBasicAutocompletion: false,
   enableLiveAutocompletion: false,
 };
-
-const { combineReducers } = Redux;
-const editorApp = combineReducers({
-  userCode:userCode
-})
-
-window.store = Redux.createStore(editorApp);
-
-
 
 const ReactAce2 = ReactAce.default;
 
