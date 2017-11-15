@@ -85,6 +85,11 @@
         return state -->
 
     <script>
+        if (!window.store) {
+            window.store = {}
+        }
+    </script>
+    <script>
         function run_js(){
             var cons = document.getElementById("console");
             var jscode = cons.value;
