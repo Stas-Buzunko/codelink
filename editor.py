@@ -86,12 +86,12 @@ def load_script(evt):
 def run(*args):
     global output
     index = store.getState().userCode.runFromIndex
-    
 
     for x in range(0, index + 1):
         output = ''
 
-        src = store.getState().userCode.values[x]
+        values = store.getState().userCode.values[0: x + 1]
+        src = '\n'.join(values)
 
         first = src
 
