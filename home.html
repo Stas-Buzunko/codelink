@@ -85,8 +85,14 @@
         return state -->
 
     <script>
+        let values = []
+
+        if (window.location.hash) {
+            values = window.location.hash.slice(1).split(',').map(undecoded => decodeURIComponent(undecoded))
+        }
+
         const initialState = {
-          values: [],
+          values,
           runFromIndex: null,
           results: []
         }

@@ -405,15 +405,15 @@ class Editor extends React.Component{
                 <div className="row">
                     <div className="editor" style={{width: '100%'}}>
                         <AceEditor
-                            mode="python"
-                            theme="dracula"
-                            value={value}
-                            onChange={onChange}
-                            editorProps={{$blockScrolling: true}}
-                            minLines={4}
-                            maxLines={4}
-                            showLineNumbers={false}
-                         />
+                          mode="python"
+                          theme="dracula"
+                          value={value}
+                          onChange={onChange}
+                          editorProps={{$blockScrolling: true}}
+                          minLines={4}
+                          maxLines={4}
+                          showLineNumbers={false}
+                        />
                     </div>
                 </div>
                 <div className="row" style={{padding: 0, marginTop: '10px'}}>
@@ -439,38 +439,46 @@ class Editor extends React.Component{
 const numberOfInputs = 2
 
 class CodeApp extends React.Component {
-    componentWillReceiveProps(nextProps) {
-      if (this.props.userCode.runFromIndex !== nextProps.userCode.runFromIndex && nextProps.userCode.runFromIndex !== null) {
-        document.getElementById('run-button').click();
-      }
+  componentWillReceiveProps(nextProps) {
+    if (this.props.userCode.runFromIndex !== nextProps.userCode.runFromIndex && nextProps.userCode.runFromIndex !== null) {
+      document.getElementById('run-button').click();
     }
+  }
 
-    onRun = index => {
-      store.dispatch({ type: 'UPDATE_INDEX', index });
-    }
+  onRun = index => {
+    store.dispatch({ type: 'UPDATE_INDEX', index });
+  }
 
-    onChange = (value, index) => {
-      store.dispatch({ value, type: 'UPDATE_CODE', index });
-    }
+  onChange = (value, index) => {
+    store.dispatch({ value, type: 'UPDATE_CODE', index });
+  }
 
-    render() {
-        const { values, results } = this.props.userCode
+  generateUrl = () => {
+    const { values } = this.props.userCode
+    let encoded = values.filter(value => value).map((value, i) => encodeURIComponent(value)).join(',')
 
-        return (
-            <div className="container">
-                {Array.from(Array(numberOfInputs).keys()).map(number =>
-                    <Editor
-                      value={values[number]}
-                      result={results[number]}
-                      onChange={value => this.onChange(value, number)}
-                      index={number}
-                      key={number}
-                      onRun={() => this.onRun(number)}
-                      onStop={() => this.setState({ isRunning: false })} />
-                )}
-            </div>
-        )
-    }
+    window.location.hash = encoded
+  }
+
+  render() {
+    const { values, results } = this.props.userCode
+
+    return (
+      <div className="container">
+        {Array.from(Array(numberOfInputs).keys()).map(number =>
+          <Editor
+            value={values[number]}
+            result={results[number]}
+            onChange={value => this.onChange(value, number)}
+            index={number}
+            key={number}
+            onRun={() => this.onRun(number)}
+            onStop={() => this.setState({ isRunning: false })} />
+        )}
+        <button onClick={this.generateUrl}>Generate url with code</button>
+      </div>
+    )
+  }
 } 
 
 const render = () => {  
@@ -484,3 +492,31 @@ const render = () => {
 
 store.subscribe(render);
 render();
+
+
+
+  // function _remove_token_from_url() {
+  //   if (window.location.search.length <= 1) {
+  //     return;
+  //   }
+  //   var search_parameters = window.location.search.slice(1).split('&');
+  //   for (var i = 0; i < search_parameters.length; i++) {
+  //     if (search_parameters[i].split('=')[0] === 'token') {
+  //       // remote token from search parameters
+  //       search_parameters.splice(i, 1);
+  //       var new_search = '';
+  //       if (search_parameters.length) {
+  //         new_search = '?' + search_parameters.join('&');
+  //       }
+  //       var new_url = window.location.origin + 
+  //                     window.location.pathname + 
+  //                     new_search + 
+  //                     window.location.hash;
+  //       window.history.replaceState({}, "", new_url);
+  //       return;
+  //     }
+  //   }
+  // }
+  // _remove_token_from_url();
+
+
