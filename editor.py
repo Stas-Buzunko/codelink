@@ -85,27 +85,18 @@ def show_console(ev):
 # run a script, in global namespace if in_globals is True
 def run(*args):
     global output
+
     index = store.getState().userCode.runFromIndex
+    namespace = {}
 
     for x in range(0, index + 1):
         output = ''
 
-        values = store.getState().userCode.values
+        src = store.getState().userCode.values[x]
 
-        scope = '\n'.join(values[0: x])
-
-        src = values[x]
-
-        first = src
-        # print(locals(), **globals())
-
-        d = dict(locals(), globals())
-        # d = {'scope': scope, '__name__':'__main__'}
-        # print(d)
         t0 = time.perf_counter()
         try:
-            ns = {'__name__':'__main__'}
-            exec(first, d, d)
+            exec(src, namespace)
             state = 1
         except Exception as exc:
             traceback.print_exc(file=sys.stderr)
