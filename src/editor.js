@@ -483,7 +483,7 @@ class CodeApp extends React.Component {
 
   render() {
     const { values, results } = this.props.userCode
-console.log(JSURL)
+
     return (
       <div className="container">
         {Array.from(Array(numberOfInputs).keys()).map(number =>
