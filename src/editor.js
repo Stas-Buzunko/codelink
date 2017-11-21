@@ -453,16 +453,37 @@ class CodeApp extends React.Component {
     store.dispatch({ value, type: 'UPDATE_CODE', index });
   }
 
-  generateUrl = () => {
+  generateUrl = (isJSURL = false) => {
     const { values } = this.props.userCode
-    let encoded = values.filter(value => value).map((value, i) => encodeURIComponent(value)).join(',')
+    const allCode = values.join('')
+
+    if (allCode.length > 2000) {
+      return alert('You can encode up to 2000 symbols')
+    }
+    let encoded
+
+    const filteredCode = values.filter(value => value)
+
+    if (isJSURL) {
+      encoded = JSURL.stringify(filteredCode)
+    } else {
+      encoded = filteredCode.map((value, i) => encodeURIComponent(value)).join(',')
+    }
 
     window.location.hash = encoded
   }
 
+  displayNumberOfCharacters = () => {
+    const { values } = this.props.userCode
+    const allCodeString = values.join('')
+
+    return allCodeString.length
+  }
+
+
   render() {
     const { values, results } = this.props.userCode
-
+console.log(JSURL)
     return (
       <div className="container">
         {Array.from(Array(numberOfInputs).keys()).map(number =>
@@ -475,7 +496,9 @@ class CodeApp extends React.Component {
             onRun={() => this.onRun(number)}
             onStop={() => this.setState({ isRunning: false })} />
         )}
-        <button onClick={this.generateUrl}>Generate url with code</button>
+        <p>Number of characters: {this.displayNumberOfCharacters()}</p>
+        <button onClick={() => this.generateUrl(false)}>Generate url with code</button>
+        <button onClick={() => this.generateUrl(true)}>Generate url with JSURL</button>
       </div>
     )
   }

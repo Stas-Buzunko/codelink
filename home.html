@@ -46,6 +46,7 @@
     <script type="text/javascript" src="src/py_import_hooks.js"></script>
 
     <script type="text/javascript" src="src/brython_stdlib.js"></script>
+    <script type="text/javascript" src="src/jsurl.js"></script>
 
  <!--    <script src="ace/ace.js" type="text/javascript" charset="utf-8"></script>
     <script src="ace/ext-language_tools.js" type="text/javascript" charset="utf-8"></script>
@@ -88,7 +89,13 @@
         let values = []
 
         if (window.location.hash) {
-            values = window.location.hash.slice(1).split(',').map(undecoded => decodeURIComponent(undecoded))
+            const withoutHash = window.location.hash.slice(1)
+            const parsedWithJSURL = JSURL.tryParse(withoutHash)
+
+            values = parsedWithJSURL
+                ? parsedWithJSURL
+                : withoutHash.split(',').map(undecoded => decodeURIComponent(undecoded))
+
         }
 
         const initialState = {
