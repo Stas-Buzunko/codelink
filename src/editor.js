@@ -406,7 +406,6 @@ class Editor extends React.Component{
                     <div className="editor" style={{width: '100%'}}>
                         <AceEditor
                           mode="python"
-                          theme="dracula"
                           value={value}
                           onChange={onChange}
                           editorProps={{$blockScrolling: true}}
