@@ -397,7 +397,7 @@ const ReactAce2 = ReactAce.default;
 
 class Editor extends React.Component{
  render(){
-   const { onRun, index, onChange, value, result } = this.props;
+   const { onRun, index, onChange, value = '', result, runAll } = this.props;
 
    return (
         <div className="col-lg-12" style={{marginTop: '20px'}}>
@@ -410,9 +410,14 @@ class Editor extends React.Component{
                           value={value}
                           onChange={onChange}
                           editorProps={{$blockScrolling: true}}
-                          minLines={4}
-                          maxLines={4}
+                          minLines={1}
+                          maxLines={value.split(/\r\n|\r|\n/).length}
                           showLineNumbers={false}
+                          commands={[{   // commands is array of key bindings.
+                            name: 'executeCode', //name for the key binding.
+                            bindKey: { win: 'Shift-Enter', mac: 'Shift-Enter' }, //key combination used for the command.
+                            exec: runAll  //function to execute when keys are pressed.
+                          }]}
                         />
                     </div>
                 </div>
@@ -480,7 +485,6 @@ class CodeApp extends React.Component {
     return allCodeString.length
   }
 
-
   render() {
     const { values, results } = this.props.userCode
 
@@ -494,7 +498,8 @@ class CodeApp extends React.Component {
             index={number}
             key={number}
             onRun={() => this.onRun(number)}
-            onStop={() => this.setState({ isRunning: false })} />
+            onStop={() => this.setState({ isRunning: false })}
+            runAll={() => this.onRun(numberOfInputs - 1)} />
         )}
         <p>Number of characters: {this.displayNumberOfCharacters()}</p>
         <button onClick={() => this.generateUrl(false)}>Generate url with code</button>
@@ -515,31 +520,3 @@ const render = () => {
 
 store.subscribe(render);
 render();
-
-
-
-  // function _remove_token_from_url() {
-  //   if (window.location.search.length <= 1) {
-  //     return;
-  //   }
-  //   var search_parameters = window.location.search.slice(1).split('&');
-  //   for (var i = 0; i < search_parameters.length; i++) {
-  //     if (search_parameters[i].split('=')[0] === 'token') {
-  //       // remote token from search parameters
-  //       search_parameters.splice(i, 1);
-  //       var new_search = '';
-  //       if (search_parameters.length) {
-  //         new_search = '?' + search_parameters.join('&');
-  //       }
-  //       var new_url = window.location.origin + 
-  //                     window.location.pathname + 
-  //                     new_search + 
-  //                     window.location.hash;
-  //       window.history.replaceState({}, "", new_url);
-  //       return;
-  //     }
-  //   }
-  // }
-  // _remove_token_from_url();
-
-
