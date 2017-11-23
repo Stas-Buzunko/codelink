@@ -1,5 +1,8 @@
 .ace_content {
   background: #f7f7f7 !important;
+  line-height: 17.0001px;
+  min-height: 1px;
+  font-family: monospace;
 }
 .ace_keyword, .ace_numeric {
   color: #008000 !important;
