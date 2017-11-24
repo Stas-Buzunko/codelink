@@ -442,6 +442,31 @@ class Editor extends React.Component{
 
 const numberOfInputs = 2
 
+const template = {
+  "cells": [],
+  "metadata": {
+   "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    },
+    "language_info": {
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "file_extension": ".py",
+      "mimetype": "text/x-python",
+      "name": "python",
+      "nbconvert_exporter": "python",
+      "pygments_lexer": "ipython3",
+      "version": "3.6.2"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 2
+}
+
 class CodeApp extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.userCode.runFromIndex !== nextProps.userCode.runFromIndex && nextProps.userCode.runFromIndex !== null) {
@@ -484,11 +509,62 @@ class CodeApp extends React.Component {
     return allCodeString.length
   }
 
+  onFileUpload = event => {
+    const reader = new FileReader();
+    reader.onload = this.onReaderLoad;
+    reader.readAsText(event.target.files[0]);
+  }
+
+  onReaderLoad = (event) => {
+    const object = JSON.parse(event.target.result)
+    if (!object) {
+      return alert('Please check format of file')
+    }
+    const { cells } = object
+
+    if (Array.isArray(cells)) {
+      cells.forEach((cell, i) => this.onChange(cell.source.join(''), i))
+    }
+  }
+
+  downloadFile = () => {
+    const file = this.generateFile()
+    const element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + JSON.stringify(file));
+    element.setAttribute('download', 'Untitled.ipynb');
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
+  generateFile = () => {
+    const { values } = this.props.userCode
+
+    template.cells = values.map(value => ({
+      "cell_type": "code",
+      "execution_count": null,
+      "metadata": {},
+      "outputs": [],
+      "source": [
+        value
+      ]
+    }))
+
+    return template
+  }
+
   render() {
     const { values, results } = this.props.userCode
 
     return (
       <div className="container">
+        <h3>Upload a file to read in data</h3>
+        <p>File should </p>
+        <input id="file" type="file" onChange={this.onFileUpload} />
         {Array.from(Array(numberOfInputs).keys()).map(number =>
           <Editor
             value={values[number]}
@@ -503,6 +579,7 @@ class CodeApp extends React.Component {
         <p>Number of characters: {this.displayNumberOfCharacters()}</p>
         <button onClick={() => this.generateUrl(false)}>Generate url with code</button>
         <button onClick={() => this.generateUrl(true)}>Generate url with JSURL</button>
+        <button onClick={this.downloadFile}>Download .ipynb</button>
       </div>
     )
   }
