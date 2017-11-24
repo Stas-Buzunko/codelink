@@ -6,8 +6,11 @@ import 'brace/mode/python';
 import 'brace/mode/jsx';
 import 'brace/ext/language_tools';
 import 'brace/ext/searchbox';
-import { createStore, combineReducers } from 'redux'
+import { createStore, combineReducers, applyMiddleware } from 'redux'
 import JSURL from 'jsurl'
+import logger from 'redux-logger'
+
+
 // import 'brace/theme/github';
 // import './css/bootstrap.min.css'
 // import './css/doc_brython.css'
@@ -68,9 +71,9 @@ const editorApp = combineReducers({
   userCode:userCode
 })
 
-window.store = createStore(editorApp);
+window.store = createStore(editorApp, applyMiddleware(logger));
 const store = window.store
-// 
+
 ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/');
 
 const Editor = ({ onRun, index, onChange, value = '', result, runAll }) => (
