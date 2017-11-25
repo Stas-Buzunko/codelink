@@ -133,9 +133,6 @@ doc['run-button'].bind('click', editor.run)
 
     return (
       <div className="container">
-        <h3>Upload a file to read in data</h3>
-        <p>File should </p>
-        <input id="file" type="file" onChange={this.onFileUpload} />
         {Array.from(Array(numberOfInputs).keys()).map(number =>
           <Editor
             value={values[number]}
@@ -151,6 +148,12 @@ doc['run-button'].bind('click', editor.run)
         <button onClick={() => this.generateUrl(false)}>Generate url with code</button>
         <button onClick={() => this.generateUrl(true)}>Generate url with JSURL</button>
         <button onClick={this.downloadFile}>Download .ipynb</button>
+        <button>
+          <label htmlFor="file-upload" style={{display: 'inherit', marginBottom: '0', fontWeight: '400'}}>
+            Upload file
+          </label>
+        </button>
+        <input id="file-upload" type="file" onChange={this.onFileUpload} style={{display: 'none'}} />
       </div>
     )
   }
