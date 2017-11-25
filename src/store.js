@@ -44,6 +44,11 @@ const saveToFirebase = (getState, action) => {
       payload.isAnonymous = user.isAnonymous
     }
 
+    if (type === 'LOGIN') {
+      payload.uid = action.uid
+      payload.isAnonymous = action.isAnonymous
+    }
+
     firebase.database().ref('StateChanges').push(payload)
   }
 
