@@ -63,6 +63,27 @@ window.store = store
 
 ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/');
 
+const { firebase } = store
+
+firebase.auth().onAuthStateChanged(user => {
+  if (user) {
+    const { uid } = user
+    // User is signed in.
+
+    firebase.database().ref('Logs').push(`Anonymous user ${uid} has been logged in. `)
+  } else {
+    // if not signed in, then log in him
+    firebase.auth().signInAnonymously()
+    .catch(error => {
+      const { code: errorCode, message: errorMessage } = error
+      // Handle Errors here.
+
+      console.log(errorCode, errorMessage)
+    });
+  }
+});
+
+
 ReactDOM.render(
   <Provider store={store}>
     <App />
