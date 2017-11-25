@@ -1,11 +1,11 @@
-import { UPDATE_CODE, UPDATE_INDEX, UPDATE_RESULTS } from './actions/' 
+import { UPDATE_CODE, UPDATE_INDEX, UPDATE_RESULTS } from '../actions/' 
 
 const initialState = {
   values: [],
   runFromIndex: null,
   results: []
 }
-// window.define = ace.define
+
 const userCode = (state = initialState, action) => {
   switch(action.type){
     case UPDATE_CODE:    
