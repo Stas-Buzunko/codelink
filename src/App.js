@@ -130,6 +130,7 @@ doc['run-button'].bind('click', editor.run)
 
   render() {
     const { values, results } = this.props.userCode
+    const codeLength = this.displayNumberOfCharacters()
 
     return (
       <div className="container">
@@ -144,9 +145,9 @@ doc['run-button'].bind('click', editor.run)
             onStop={() => this.setState({ isRunning: false })}
             runAll={() => this.props.updateIndex(numberOfInputs - 1)} />
         )}
-        <p>Number of characters: {this.displayNumberOfCharacters()}</p>
-        <button onClick={() => this.generateUrl(false)}>Generate url with code</button>
-        <button onClick={() => this.generateUrl(true)}>Generate url with JSURL</button>
+        <p>Number of characters: {codeLength}</p>
+        <button disabled={codeLength > 2000} onClick={() => this.generateUrl(false)}>Generate url with code</button>
+        <button disabled={codeLength > 2000} onClick={() => this.generateUrl(true)}>Generate url with JSURL</button>
         <button onClick={this.downloadFile}>Download .ipynb</button>
         <button>
           <label htmlFor="file-upload" style={{display: 'inherit', marginBottom: '0', fontWeight: '400'}}>
