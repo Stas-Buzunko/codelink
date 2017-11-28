@@ -42,7 +42,7 @@ ReactDOM.render(
       updateIndex={index => store.dispatch(updateIndex(index))}
       updateCode={(value, index) => store.dispatch(updateCode(value, index))}
       userCode={store.getState().userCode}
-      hideButtons={true}
+      hideButtons={false}
       readOnlyTests={true}
     />
   </Provider>,

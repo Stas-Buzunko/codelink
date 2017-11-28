@@ -105,7 +105,16 @@ doc['run-button'].bind('click', editor.run)
     const { cells } = object
 
     if (Array.isArray(cells)) {
-      cells.forEach((cell, i) => this.onCodeChange(cell.source.join(''), i))
+      let counter = 0
+      cells.forEach((cell, i) => {
+        const value = cell.source.join('')
+        this.onCodeChange(value, i)
+        counter += value.length
+      })
+
+      if (counter > 2000) {
+        window.location.hash = ''
+      }
     }
   }
 
@@ -154,7 +163,6 @@ doc['run-button'].bind('click', editor.run)
       updateCode(value, index)
     }
   }
-    
 
   onIndexChange = index => {
     const { isOwnState = false, updateIndex } = this.props
@@ -191,9 +199,7 @@ doc['run-button'].bind('click', editor.run)
 
   render() {
     const { isOwnState = false, hideButtons = false, readOnlyTests = false } = this.props
-
     let { values, results } = this.state
-    let updateCodeFn = this.onCodeChange
 
     if (!isOwnState && this.props.userCode) {
       values = this.props.userCode.values
