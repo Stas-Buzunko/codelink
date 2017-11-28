@@ -70,12 +70,6 @@ doc['run-button'].bind('click', editor.run)
     document.body.appendChild(script);
   }
 
-  componentWillReceiveProps(nextProps) {
-    // if (this.props.userCode.runFromIndex !== nextProps.userCode.runFromIndex && nextProps.userCode.runFromIndex !== null) {
-    //   document.getElementById('run-button').click();
-    // }
-  }
-
   generateUrl = (values, isJSURL = false) => {
     const allCode = values.join('')
 
@@ -196,7 +190,7 @@ doc['run-button'].bind('click', editor.run)
   }
 
   render() {
-    const { isOwnState = false } = this.props
+    const { isOwnState = false, hideButtons = false, readOnlyTests = false } = this.props
 
     let { values, results } = this.state
     let updateCodeFn = this.onCodeChange
@@ -212,6 +206,7 @@ doc['run-button'].bind('click', editor.run)
       <div className="container">
         {Array.from(Array(numberOfInputs).keys()).map(number =>
           <Editor
+            readOnly={readOnlyTests}
             value={values[number]}
             result={results[number]}
             onChange={value => this.onCodeChange(value, number)}
@@ -221,15 +216,19 @@ doc['run-button'].bind('click', editor.run)
             runAll={() => this.onIndexChange(numberOfInputs - 1)} />
         )}
         <p>Number of characters: {codeLength}</p>
-        <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, false)}>Generate url with code</button>
-        <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, true)}>Generate url with JSURL</button>
-        <button onClick={() => this.downloadFile(values)}>Download .ipynb</button>
-        <button>
-          <label htmlFor="file-upload" style={{display: 'inherit', marginBottom: '0', fontWeight: '400'}}>
-            Upload file
-          </label>
-        </button>
-        <input id="file-upload" type="file" onChange={this.onFileUpload} style={{display: 'none'}} />
+        {!hideButtons &&
+          <div>
+            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, false)}>Generate url with code</button>
+            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, true)}>Generate url with JSURL</button>
+            <button onClick={() => this.downloadFile(values)}>Download .ipynb</button>
+            <button>
+              <label htmlFor="file-upload" style={{display: 'inherit', marginBottom: '0', fontWeight: '400'}}>
+                Upload file
+              </label>
+            </button>
+            <input id="file-upload" type="file" onChange={this.onFileUpload} style={{display: 'none'}} />
+          </div>
+        }
       </div>
     )
   }

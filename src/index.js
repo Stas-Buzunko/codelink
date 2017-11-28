@@ -4,7 +4,7 @@ import ace from 'brace';
 import 'brace/mode/python';
 import { Provider } from 'react-redux'
 import App from './App'
-import { login } from './actions'
+import { login, updateIndex, updateCode, updateResults } from './actions'
 import store from './store'
 
 // we need this to make python able read from store
@@ -36,7 +36,15 @@ firebase.auth().onAuthStateChanged(user => {
 
 ReactDOM.render(
   <Provider store={store}>
-    <App isOwnState={true} />
+    <App
+      isOwnState={true}
+      updateResults={(value, index) => store.dispatch(updateResults(value, index))}
+      updateIndex={index => store.dispatch(updateIndex(index))}
+      updateCode={(value, index) => store.dispatch(updateCode(value, index))}
+      userCode={store.getState().userCode}
+      hideButtons={true}
+      readOnlyTests={true}
+    />
   </Provider>,
   document.getElementById('root')
 ); 

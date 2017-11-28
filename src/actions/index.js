@@ -19,3 +19,9 @@ export const login = (uid, isAnonymous) => ({
   uid,
   isAnonymous
 })
+
+export const updateResults = (value, index) => ({
+  type: UPDATE_RESULTS,
+  value,
+  index
+})

@@ -1,12 +1,13 @@
 import React from 'react';
 import AceEditor from 'react-ace'
 
-const Editor = ({ onRun, index, onChange, value = '', result, runAll }) => (
+const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly }) => (
   <div className="col-lg-12" style={{marginTop: '20px'}}>
     <div className="col-lg-6">
       <div className="row">
         <div className="editor" style={{width: '100%'}}>
           <AceEditor
+            readOnly={readOnly}
             mode="python"
             // theme=""
             value={value}
