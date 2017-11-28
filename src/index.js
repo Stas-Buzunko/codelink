@@ -36,7 +36,7 @@ firebase.auth().onAuthStateChanged(user => {
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <App isOwnState={true} />
   </Provider>,
   document.getElementById('root')
 ); 

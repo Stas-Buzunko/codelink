@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux'
 import JSURL from 'jsurl'
-import { updateCode, updateIndex } from './actions/'
 import Editor from './Editor'
 
 const numberOfInputs = 2
@@ -32,6 +30,30 @@ const template = {
 }
 
 class CodeApp extends Component {
+  constructor(props) {
+    super(props)
+
+    let values = []
+
+    if (window.location.hash) {
+      const withoutHash = window.location.hash.slice(1)
+      const parsedWithJSURL = JSURL.tryParse(withoutHash)
+
+      values = parsedWithJSURL
+        ? parsedWithJSURL
+        : withoutHash.split(',').map(undecoded => decodeURIComponent(undecoded))
+    }
+
+    this.state = {
+      values,
+      results: [],
+      runFromIndex: null,
+    }
+
+    window.state = this.state
+    window.updateResults = this.updateResults.bind(this)
+  }
+
   componentWillMount () {
     const script = document.createElement("script");
 
@@ -47,14 +69,14 @@ doc['run-button'].bind('click', editor.run)
 
     document.body.appendChild(script);
   }
+
   componentWillReceiveProps(nextProps) {
-    if (this.props.userCode.runFromIndex !== nextProps.userCode.runFromIndex && nextProps.userCode.runFromIndex !== null) {
-      document.getElementById('run-button').click();
-    }
+    // if (this.props.userCode.runFromIndex !== nextProps.userCode.runFromIndex && nextProps.userCode.runFromIndex !== null) {
+    //   document.getElementById('run-button').click();
+    // }
   }
 
-  generateUrl = (isJSURL = false) => {
-    const { values } = this.props.userCode
+  generateUrl = (values, isJSURL = false) => {
     const allCode = values.join('')
 
     if (allCode.length > 2000) {
@@ -73,12 +95,7 @@ doc['run-button'].bind('click', editor.run)
     window.location.hash = encoded
   }
 
-  displayNumberOfCharacters = () => {
-    const { values } = this.props.userCode
-    const allCodeString = values.join('')
-
-    return allCodeString.length
-  }
+  displayNumberOfCharacters = values => values.join('').length
 
   onFileUpload = event => {
     const reader = new FileReader();
@@ -86,7 +103,7 @@ doc['run-button'].bind('click', editor.run)
     reader.readAsText(event.target.files[0]);
   }
 
-  onReaderLoad = (event) => {
+  onReaderLoad = event => {
     const object = JSON.parse(event.target.result)
     if (!object) {
       return alert('Please check format of file')
@@ -94,12 +111,12 @@ doc['run-button'].bind('click', editor.run)
     const { cells } = object
 
     if (Array.isArray(cells)) {
-      cells.forEach((cell, i) => this.props.updateCode(cell.source.join(''), i))
+      cells.forEach((cell, i) => this.onCodeChange(cell.source.join(''), i))
     }
   }
 
-  downloadFile = () => {
-    const file = this.generateFile()
+  downloadFile = values => {
+    const file = this.generateFile(values)
     const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + JSON.stringify(file));
     element.setAttribute('download', 'Untitled.ipynb');
@@ -112,9 +129,7 @@ doc['run-button'].bind('click', editor.run)
     document.body.removeChild(element);
   }
 
-  generateFile = () => {
-    const { values } = this.props.userCode
-
+  generateFile = values => {
     template.cells = values.map(value => ({
       "cell_type": "code",
       "execution_count": null,
@@ -128,9 +143,70 @@ doc['run-button'].bind('click', editor.run)
     return template
   }
 
+  onCodeChange = (value, index) => {
+    const { isOwnState, updateCode } = this.props
+
+    if (isOwnState) {
+      this.setState({
+        values: [
+          ...this.state.values.slice(0, index),
+          value,
+          ...this.state.values.slice(index + 1)
+        ]
+      }, (state) => {window.state = state})
+    }
+
+    if (updateCode) {
+      updateCode(value, index)
+    }
+  }
+    
+
+  onIndexChange = index => {
+    const { isOwnState = false, updateIndex } = this.props
+
+    if (isOwnState) {
+      this.setState({runFromIndex: index}, () => {
+        window.state = this.state
+        document.getElementById('run-button').click();
+      })
+    }
+
+    if (updateIndex) {
+      updateIndex(index)
+    }
+  }
+
+  updateResults = (value, index) => {
+    this.setState( state => ({
+        results: [
+          ...state.results.slice(0, index),
+          value,
+          ...state.results.slice(index + 1)
+        ],
+        runFromIndex: null
+      })
+    )
+
+    const { updateResults } = this.props
+
+    if (updateResults) {
+      updateResults(value, index)
+    }
+  }
+
   render() {
-    const { values, results } = this.props.userCode
-    const codeLength = this.displayNumberOfCharacters()
+    const { isOwnState = false } = this.props
+
+    let { values, results } = this.state
+    let updateCodeFn = this.onCodeChange
+
+    if (!isOwnState && this.props.userCode) {
+      values = this.props.userCode.values
+      results = this.props.userCode.results
+    }
+
+    const codeLength = this.displayNumberOfCharacters(values)
 
     return (
       <div className="container">
@@ -138,17 +214,16 @@ doc['run-button'].bind('click', editor.run)
           <Editor
             value={values[number]}
             result={results[number]}
-            onChange={value => this.props.updateCode(value, number)}
+            onChange={value => this.onCodeChange(value, number)}
             index={number}
             key={number}
-            onRun={() => this.props.updateIndex(number)}
-            onStop={() => this.setState({ isRunning: false })}
-            runAll={() => this.props.updateIndex(numberOfInputs - 1)} />
+            onRun={() => this.onIndexChange(number)}
+            runAll={() => this.onIndexChange(numberOfInputs - 1)} />
         )}
         <p>Number of characters: {codeLength}</p>
-        <button disabled={codeLength > 2000} onClick={() => this.generateUrl(false)}>Generate url with code</button>
-        <button disabled={codeLength > 2000} onClick={() => this.generateUrl(true)}>Generate url with JSURL</button>
-        <button onClick={this.downloadFile}>Download .ipynb</button>
+        <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, false)}>Generate url with code</button>
+        <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, true)}>Generate url with JSURL</button>
+        <button onClick={() => this.downloadFile(values)}>Download .ipynb</button>
         <button>
           <label htmlFor="file-upload" style={{display: 'inherit', marginBottom: '0', fontWeight: '400'}}>
             Upload file
@@ -160,8 +235,4 @@ doc['run-button'].bind('click', editor.run)
   }
 }
 
-const mapStateToProps = state => ({
-  userCode: state.userCode
-})
-
-export default connect(mapStateToProps , { updateCode, updateIndex })(CodeApp)
+export default CodeApp
