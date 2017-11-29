@@ -224,8 +224,8 @@ doc['run-button'].bind('click', editor.run)
         <p>Number of characters: {codeLength}</p>
         {!hideButtons &&
           <div>
-            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, false)}>Generate url with code</button>
-            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, true)}>Generate url with JSURL</button>
+            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, false)} style={{backgroundColor: codeLength > 2000 ? 'lightgrey' : ''}}>Generate url with code</button>
+            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, true)} style={{backgroundColor: codeLength > 2000 ? 'lightgrey' : ''}}>Generate url with JSURL</button>
             <button onClick={() => this.downloadFile(values)}>Download .ipynb</button>
             <button>
               <label htmlFor="file-upload" style={{display: 'inherit', marginBottom: '0', fontWeight: '400'}}>
