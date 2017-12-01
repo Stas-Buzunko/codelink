@@ -88,13 +88,64 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-    <script type="text/javascript">var exports = {};window.updateResults = {};</script>
+    <script type="text/javascript">var exports = {};</script>
     <script type="text/babel" src="./Codelink.js"></script>
 
     <script type="text/babel">
+      const file1 = {"cells":[{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":["def sum(a,b):\n    return a+b\nprint(\"Created function\")"]}],"metadata":{"kernelspec":{"display_name":"Python 3","language":"python","name":"python3"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.6.2"}},"nbformat":4,"nbformat_minor":2}
 
+      const file2 = {"cells":[{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":["def sum(a,b):\n    return a+b\nprint(\"Created function\")"]},{"cell_type":"code","execution_count":null,"metadata":{},"outputs":[],"source":["assert sum(1,2) == 3\nprint(\"Tests passed\")"]}],"metadata":{"kernelspec":{"display_name":"Python 3","language":"python","name":"python3"},"language_info":{"codemirror_mode":{"name":"ipython","version":3},"file_extension":".py","mimetype":"text/x-python","name":"python","nbconvert_exporter":"python","pygments_lexer":"ipython3","version":"3.6.2"}},"nbformat":4,"nbformat_minor":2}
+      
+      class App extends React.Component {
+        constructor(props) {
+          super(props)
+
+          this.state = {
+            exportedText: '',
+            jsonToImport: ''
+          }
+        }
+        render() {
+          const { exportedText, jsonToImport } = this.state
+          const codeLength = jsonToImport.length
+          return (
+            <div>
+              <CodeApp
+                ref={c => {this.codelink = c}}
+                isOwnState={true}
+                updateResults={(value, index) => console.log(value, index)}
+                updateIndex={index => console.log(index)}
+                updateCode={(value, index) => console.log(value, index)}
+                onGenerateURL={encoded => this.setState({exportedText: encoded})}
+                onUploadFile={() => this.codelink && this.codelink.onReaderLoad(jsonToImport)}
+                onDownloadFile={file => this.setState({exportedText: file})}
+                hideButtons={true}
+                readOnlyTests={true}/>
+              <div>
+                <label>Exported text</label>
+                <input value={exportedText} style={{width: '70%'}} />
+                <button disabled={codeLength > 2000} onClick={() => this.codelink && this.codelink.generateUrl(false)} style={{backgroundColor: codeLength > 2000 ? 'lightgrey' : ''}}>url</button>
+                <button disabled={codeLength > 2000} onClick={() => this.codelink && this.codelink.generateUrl(true)} style={{backgroundColor: codeLength > 2000 ? 'lightgrey' : ''}}>jsurl</button>
+            	<button onClick={() => this.codelink && this.codelink.downloadFile()}>ipynb</button>
+
+              </div>
+              <div>
+                <label>JSON to import</label>
+                <input value={jsonToImport} onChange={e => this.setState({jsonToImport: e.target.value})} style={{width: '70%'}} />
+                <button onClick={() => this.codelink && this.codelink.onReaderLoad(jsonToImport)}>
+	              <label htmlFor="file-upload" style={{display: 'inherit', marginBottom: '0', fontWeight: '400'}}>
+	                import
+	              </label>
+	            </button>
+                <a href={`data:text/plain;charset=utf-8,${JSON.stringify(file1)}`} download="1.ipynb">1.ipynb</a>
+                <a href={`data:text/plain;charset=utf-8,${JSON.stringify(file2)}`} download="2.ipynb">2.ipynb</a>
+              </div>
+            </div>
+          )
+        }
+      }
       ReactDOM.render(
-        <CodeApp isOwnState={true} />,
+        <App />,
         document.getElementById('root')
       )
     </script>

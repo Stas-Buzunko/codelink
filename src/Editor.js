@@ -1,7 +1,7 @@
 import React from 'react';
 import AceEditor from 'react-ace'
 
-const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly }) => (
+const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, showButton = true }) => (
   <div className="col-lg-12" style={{marginTop: '20px'}}>
     <div className="col-lg-6">
       <div className="row">
@@ -9,7 +9,7 @@ const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly }
           <AceEditor
             readOnly={readOnly}
             mode="python"
-            // theme=""
+            theme=""
             value={value}
             onChange={onChange}
             editorProps={{$blockScrolling: true}}
@@ -30,14 +30,16 @@ const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly }
             {result}
           </pre>
         </div>
-        <div className="col-lg-4">
-          <button
-            className="btn btn-success"
-            onClick={onRun}
-          >
-            Run All Above
-          </button>
-        </div>
+        {showButton &&
+          <div className="col-lg-4">
+            <button
+              className="btn btn-success"
+              onClick={onRun}
+            >
+              Run All Above
+            </button>
+          </div>
+        }
       </div>
     </div>            
   </div>

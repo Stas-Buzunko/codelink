@@ -1,6 +1,6 @@
 const AceEditor = ReactAce.default
 
-const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly }) => (
+const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, showButton = true }) => (
   <div className="col-lg-12" style={{marginTop: '20px'}}>
     <div className="col-lg-6">
       <div className="row">
@@ -29,14 +29,16 @@ const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly }
             {result}
           </pre>
         </div>
-        <div className="col-lg-4">
-          <button
-            className="btn btn-success"
-            onClick={onRun}
-          >
-            Run All Above
-          </button>
-        </div>
+        {showButton &&
+          <div className="col-lg-4">
+            <button
+              className="btn btn-success"
+              onClick={onRun}
+            >
+              Run All Above
+            </button>
+          </div>
+        }
       </div>
     </div>            
   </div>
@@ -88,6 +90,7 @@ class CodeApp extends React.Component {
       values,
       results: [],
       runFromIndex: null,
+
     }
 
     window.state = this.state
@@ -110,7 +113,8 @@ doc['run-button'].bind('click', editor.run)
     document.body.appendChild(script);
   }
 
-  generateUrl = (values, isJSURL = false) => {
+  generateUrl = (isJSURL = false) => {
+    const { values } = this.state
     const allCode = values.join('')
 
     if (allCode.length > 2000) {
@@ -126,6 +130,11 @@ doc['run-button'].bind('click', editor.run)
       encoded = filteredCode.map((value, i) => encodeURIComponent(value)).join(',')
     }
 
+    if (this.props.onGenerateURL) {
+      return this.props.onGenerateURL(encoded)
+      // return this.setState({exportedText: encoded})
+    }
+
     window.location.hash = encoded
   }
 
@@ -133,12 +142,15 @@ doc['run-button'].bind('click', editor.run)
 
   onFileUpload = event => {
     const reader = new FileReader();
-    reader.onload = this.onReaderLoad;
+    reader.onload = (e) => this.onReaderLoad(e.target.result);
     reader.readAsText(event.target.files[0]);
   }
 
-  onReaderLoad = event => {
-    const object = JSON.parse(event.target.result)
+  onReaderLoad = result => {
+    if (!result) {
+      return false
+    }
+    const object = JSON.parse(result)
     if (!object) {
       return alert('Please check format of file')
     }
@@ -158,8 +170,12 @@ doc['run-button'].bind('click', editor.run)
     }
   }
 
-  downloadFile = values => {
+  downloadFile = () => {
+    const { values } = this.state
     const file = this.generateFile(values)
+    if (this.props.onDownloadFile) {
+      return this.props.onDownloadFile(JSON.stringify(file))
+    }
     const element = document.createElement('a');
     element.setAttribute('href', 'data:text/plain;charset=utf-8,' + JSON.stringify(file));
     element.setAttribute('download', 'Untitled.ipynb');
@@ -190,13 +206,13 @@ doc['run-button'].bind('click', editor.run)
     const { isOwnState, updateCode } = this.props
 
     if (isOwnState) {
-      this.setState({
+      this.setState(state => ({
         values: [
-          ...this.state.values.slice(0, index),
+          ...state.values.slice(0, index),
           value,
-          ...this.state.values.slice(index + 1)
+          ...state.values.slice(index + 1)
         ]
-      }, (state) => {window.state = state})
+      }), () => {window.state = this.state})
     }
 
     if (updateCode) {
@@ -238,8 +254,8 @@ doc['run-button'].bind('click', editor.run)
   }
 
   render() {
-    const { isOwnState = false, hideButtons = false, readOnlyTests = false } = this.props
-    let { values, results } = this.state
+    const { isOwnState = false, hideButtons = false, readOnlyTests = false, onUploadFile } = this.props
+    let { values, results, exportedText } = this.state
 
     if (!isOwnState && this.props.userCode) {
       values = this.props.userCode.values
@@ -247,10 +263,11 @@ doc['run-button'].bind('click', editor.run)
     }
 
     const codeLength = this.displayNumberOfCharacters(values)
+    const array = Array.from(Array(numberOfInputs).keys())
 
     return (
       <div className="container">
-        {Array.from(Array(numberOfInputs).keys()).map(number =>
+        {array.map(number =>
           <Editor
             readOnly={readOnlyTests}
             value={values[number]}
@@ -259,20 +276,21 @@ doc['run-button'].bind('click', editor.run)
             index={number}
             key={number}
             onRun={() => this.onIndexChange(number)}
-            runAll={() => this.onIndexChange(numberOfInputs - 1)} />
+            runAll={() => this.onIndexChange(numberOfInputs - 1)}
+            showButton={!readOnlyTests || (number === array.length -1) } />
         )}
         <p>Number of characters: {codeLength}</p>
         {!hideButtons &&
           <div>
-            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, false)} style={{backgroundColor: codeLength > 2000 ? 'lightgrey' : ''}}>Generate url with code</button>
-            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(values, true)} style={{backgroundColor: codeLength > 2000 ? 'lightgrey' : ''}}>Generate url with JSURL</button>
-            <button onClick={() => this.downloadFile(values)}>Download .ipynb</button>
-            <button>
+            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(false)} style={{backgroundColor: codeLength > 2000 ? 'lightgrey' : ''}}>Generate url with code</button>
+            <button disabled={codeLength > 2000} onClick={() => this.generateUrl(true)} style={{backgroundColor: codeLength > 2000 ? 'lightgrey' : ''}}>Generate url with JSURL</button>
+            <button onClick={this.downloadFile}>Download .ipynb</button>
+            <button onClick={onUploadFile ? onUploadFile : () => {}}>
               <label htmlFor="file-upload" style={{display: 'inherit', marginBottom: '0', fontWeight: '400'}}>
                 Upload file
               </label>
             </button>
-            <input id="file-upload" type="file" onChange={this.onFileUpload} style={{display: 'none'}} />
+            {!onUploadFile &&  <input id="file-upload" type="file" onChange={this.onFileUpload} style={{display: 'none'}} />}
           </div>
         }
       </div>
