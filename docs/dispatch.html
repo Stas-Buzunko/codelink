@@ -109,11 +109,51 @@
         index
       })
 
+      const urlLogger = (format, url) => ({
+        type: 'LOADED_FROM_URL',
+        format,
+        url
+      })
+
+      const generateUrlLogger = url => ({
+        type: 'GENERATE_URL',
+        url
+      })
+
+      const generateJSUrlLogger = jsurl => ({
+        type: 'GENERATE_JSURL',
+        jsurl
+      })
+
+      const downloadIpynbLogger = (title, json) => ({
+        type: 'DOWNLOAD_IPYNB',
+        title,
+        json
+      })
+
+      const uploadIpynbLogger = json => ({
+        type: 'UPLOAD_IPYNB',
+        json
+      })
+
+      const runAllLogger = (output, errors) => ({
+        type: 'RUN_ALL',
+        output,
+        errors
+      })
+
       ReactDOM.render(
         <CodeApp
           updateResults={(value, index) => console.log(updateResults(value, index))}
           updateIndex={index => console.log(updateIndex(index))}
-          updateCode={(value, index) => console.log(updateCode(value, index))} />,
+          updateCode={(value, index) => console.log(updateCode(value, index))} 
+          urlLogger={(format,url) => console.log(urlLogger(format,url))}
+          generateUrlLogger={url => console.log(generateUrlLogger(url))}
+          generateJSUrlLogger={url => console.log(generateJSUrlLogger(url))}
+          downloadIpynbLogger={(title, json) => console.log(downloadIpynbLogger(title, json))}
+          uploadIpynbLogger={(title, json) => console.log(uploadIpynbLogger(title, json))}
+          runAllLogger={(output, errors) => console.log(runAllLogger(output, errors))}
+           />,
         document.getElementById('root')
       )
     </script>

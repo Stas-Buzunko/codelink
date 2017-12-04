@@ -81,9 +81,17 @@ class CodeApp extends React.Component {
       const withoutHash = window.location.hash.slice(1)
       const parsedWithJSURL = JSURL.tryParse(withoutHash)
 
-      values = parsedWithJSURL
-        ? parsedWithJSURL
-        : withoutHash.split(',').map(undecoded => decodeURIComponent(undecoded))
+      if (parsedWithJSURL) {
+        values = parsedWithJSURL
+      } else {
+        values = withoutHash.split(',').map(undecoded => decodeURIComponent(undecoded))
+      }
+
+      if (props.urlLogger) {
+        const format = Boolean(parsedWithJSURL) ? 'jsurl' : 'basic encode'
+
+        props.urlLogger(format, withoutHash)
+      }
     }
 
     this.state = {
@@ -126,8 +134,14 @@ doc['run-button'].bind('click', editor.run)
 
     if (isJSURL) {
       encoded = JSURL.stringify(filteredCode)
+      if (this.props.generateJSUrlLogger) {
+        this.props.generateJSUrlLogger(encoded)
+      }
     } else {
       encoded = filteredCode.map((value, i) => encodeURIComponent(value)).join(',')
+      if (this.props.generateUrlLogger) {
+        this.props.generateUrlLogger(encoded)
+      }
     }
 
     if (this.props.onGenerateURL) {
@@ -150,9 +164,15 @@ doc['run-button'].bind('click', editor.run)
       return false
     }
     const object = JSON.parse(result)
+
     if (!object) {
       return alert('Please check format of file')
     }
+
+    if (this.props.uploadIpynbLogger) {
+      this.props.uploadIpynbLogger(result)
+    }
+
     const { cells } = object
 
     if (Array.isArray(cells)) {
@@ -172,6 +192,11 @@ doc['run-button'].bind('click', editor.run)
   downloadFile = () => {
     const { values } = this.state
     const file = this.generateFile(values)
+
+    if (this.props.downloadIpynbLogger) {
+      this.props.downloadIpynbLogger('Untitled.ipynb', file)
+    }
+
     if (this.props.onDownloadFile) {
       return this.props.onDownloadFile(JSON.stringify(file))
     }
@@ -238,6 +263,14 @@ doc['run-button'].bind('click', editor.run)
           ...state.results.slice(index + 1)
         ],
         runFromIndex: null
+      }, () => {
+        if (index === this.state.runFromIndex) {
+          // last box was executed
+
+          if (this.props.runAllLogger) {
+            this.props.runAllLogger(this.state.results)
+          }
+        }
       })
     )
 
@@ -246,6 +279,8 @@ doc['run-button'].bind('click', editor.run)
     if (updateResults) {
       updateResults(value, index)
     }
+
+
   }
 
   render() {
