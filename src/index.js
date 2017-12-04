@@ -37,7 +37,6 @@ firebase.auth().onAuthStateChanged(user => {
 ReactDOM.render(
   <Provider store={store}>
     <App
-      isOwnState={true}
       updateResults={(value, index) => store.dispatch(updateResults(value, index))}
       updateIndex={index => store.dispatch(updateIndex(index))}
       updateCode={(value, index) => store.dispatch(updateCode(value, index))}

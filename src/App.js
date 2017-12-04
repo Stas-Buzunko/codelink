@@ -162,17 +162,15 @@ doc['run-button'].bind('click', editor.run)
   }
 
   onCodeChange = (value, index) => {
-    const { isOwnState, updateCode } = this.props
+    const { updateCode } = this.props
 
-    if (isOwnState) {
-      this.setState(state => ({
-        values: [
-          ...state.values.slice(0, index),
-          value,
-          ...state.values.slice(index + 1)
-        ]
-      }), () => {window.state = this.state})
-    }
+    this.setState(state => ({
+      values: [
+        ...state.values.slice(0, index),
+        value,
+        ...state.values.slice(index + 1)
+      ]
+    }), () => {window.state = this.state})
 
     if (updateCode) {
       updateCode(value, index)
@@ -180,14 +178,12 @@ doc['run-button'].bind('click', editor.run)
   }
 
   onIndexChange = index => {
-    const { isOwnState = false, updateIndex } = this.props
+    const { updateIndex } = this.props
 
-    if (isOwnState) {
-      this.setState({runFromIndex: index}, () => {
-        window.state = this.state
-        document.getElementById('run-button').click();
-      })
-    }
+    this.setState({runFromIndex: index}, () => {
+      window.state = this.state
+      document.getElementById('run-button').click();
+    })
 
     if (updateIndex) {
       updateIndex(index)
@@ -213,13 +209,8 @@ doc['run-button'].bind('click', editor.run)
   }
 
   render() {
-    const { isOwnState = false, hideButtons = false, readOnlyTests = false, onUploadFile } = this.props
-    let { values, results, exportedText } = this.state
-
-    if (!isOwnState && this.props.userCode) {
-      values = this.props.userCode.values
-      results = this.props.userCode.results
-    }
+    const { hideButtons = false, readOnlyTests = false, onUploadFile } = this.props
+    const { values, results, exportedText } = this.state
 
     const codeLength = this.displayNumberOfCharacters(values)
     const array = Array.from(Array(numberOfInputs).keys())
