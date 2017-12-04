@@ -92,12 +92,28 @@
     <script type="text/babel" src="./Codelink.js"></script>
 
     <script type="text/babel">
+      const updateResults = (value, index) => ({
+        type: 'UPDATE_RESULTS',
+        value,
+        index
+      })
+
+      const updateCode = (value, index) => ({
+        type: 'UPDATE_CODE',
+        value,
+        index
+      })
+
+      const updateIndex = index => ({
+        type: 'UPDATE_INDEX',
+        index
+      })
 
       ReactDOM.render(
         <CodeApp
-          updateResults={(value, index) => console.log(value, index)}
-          updateIndex={index => console.log(index)}
-          updateCode={(value, index) => console.log(value, index)} />,
+          updateResults={(value, index) => console.log(updateResults(value, index))}
+          updateIndex={index => console.log(updateIndex(index))}
+          updateCode={(value, index) => console.log(updateCode(value, index))} />,
         document.getElementById('root')
       )
     </script>
