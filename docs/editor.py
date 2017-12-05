@@ -46,8 +46,10 @@ def show_console(ev):
 def run(*args):
     global output
 
-    index = window.state.runFromIndex
-    values = window.state.values
+    key = window.uniqueKey
+    index = window.runToIndex
+
+    values = window.state[key].values
 
     namespace = {}
 
@@ -65,7 +67,8 @@ def run(*args):
             state = 0
 
         value = output + '\n' + ('<completed in %6.2f ms>' % ((time.perf_counter() - t0) * 1000.0))
-        window.updateResults(value, x)
+
+        window.updateResults[key](value, x)
 
 # def show_js(ev):
     # src = store.getState().userCode

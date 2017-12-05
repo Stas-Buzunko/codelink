@@ -97,12 +97,22 @@ class CodeApp extends React.Component {
     this.state = {
       values,
       results: [],
-      runFromIndex: null,
+      runToIndex: null,
 
     }
 
-    window.state = this.state
-    window.updateResults = this.updateResults.bind(this)
+    const { uniqueKey = 0 } = props
+
+    if (!window.state) {
+      window.state = {}
+    }
+
+    window.state[uniqueKey] = this.state
+
+    if (!window.updateResults) {
+      window.updateResults = {}
+    }
+    window.updateResults[uniqueKey] = this.updateResults.bind(this)
   }
 
   componentWillMount () {
@@ -226,6 +236,15 @@ doc['run-button'].bind('click', editor.run)
     return template
   }
 
+  updateGlobalState = () => {
+    const { uniqueKey = 0 } = this.props
+
+    window.state = {
+      ...window.state,
+      [uniqueKey]: this.state
+    }
+  }
+
   onCodeChange = (value, index) => {
     const { updateCode } = this.props
 
@@ -235,7 +254,7 @@ doc['run-button'].bind('click', editor.run)
         value,
         ...state.values.slice(index + 1)
       ]
-    }), () => {window.state = this.state})
+    }), this.updateGlobalState)
 
     if (updateCode) {
       updateCode(value, index)
@@ -243,10 +262,12 @@ doc['run-button'].bind('click', editor.run)
   }
 
   onIndexChange = index => {
-    const { updateIndex } = this.props
+    const { updateIndex, uniqueKey = 0 } = this.props
 
-    this.setState({runFromIndex: index}, () => {
-      window.state = this.state
+    this.setState({runToIndex: index}, () => {
+      // window.state = this.state
+      window.uniqueKey = uniqueKey
+      window.runToIndex = index
       document.getElementById('run-button').click();
     })
 
@@ -262,16 +283,17 @@ doc['run-button'].bind('click', editor.run)
           value,
           ...state.results.slice(index + 1)
         ],
-        runFromIndex: null
-      }, () => {
-        if (index === this.state.runFromIndex) {
+        runToIndex: null
+      }), 
+      () => {
+        if (index === this.state.runToIndex) {
           // last box was executed
 
           if (this.props.runAllLogger) {
             this.props.runAllLogger(this.state.results)
           }
         }
-      })
+      }
     )
 
     const { updateResults } = this.props
@@ -279,13 +301,13 @@ doc['run-button'].bind('click', editor.run)
     if (updateResults) {
       updateResults(value, index)
     }
-
-
   }
+
+  runAll = () => this.onIndexChange(numberOfInputs - 1)
 
   render() {
     const { hideButtons = false, readOnlyTests = false, onUploadFile } = this.props
-    const { values, results, exportedText } = this.state
+    const { values, results } = this.state
 
     const codeLength = this.displayNumberOfCharacters(values)
     const array = Array.from(Array(numberOfInputs).keys())
@@ -301,7 +323,7 @@ doc['run-button'].bind('click', editor.run)
             index={number}
             key={number}
             onRun={() => this.onIndexChange(number)}
-            runAll={() => this.onIndexChange(numberOfInputs - 1)}
+            runAll={this.runAll}
             showButton={!readOnlyTests || (number === array.length -1) } />
         )}
         <p>Number of characters: {codeLength}</p>
