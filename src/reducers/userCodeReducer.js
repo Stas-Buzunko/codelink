@@ -8,7 +8,7 @@ const initialState = {
 
 const userCode = (state = initialState, action) => {
   switch(action.type){
-    case UPDATE_CODE:    
+    case UPDATE_CODE:
       return {
         ...state,
         values: [

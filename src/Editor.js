@@ -1,8 +1,15 @@
 import React from 'react';
 import AceEditor from 'react-ace'
+import MarkdownEditor from './MarkdownEditor'
 
-const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, showButton = true }) => (
+const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, showButton = true, isRunning, markdownValue, onMarkdownChange }) => (
   <div className="col-lg-12" style={{marginTop: '20px'}}>
+    {markdownValue &&
+      <div>
+        <MarkdownEditor isRunning={isRunning} value={markdownValue} onMarkdownChange={onMarkdownChange} />
+        <hr />
+      </div>
+    }
     <div className="col-lg-6">
       <div className="row">
         <div className="editor" style={{width: '100%'}}>
@@ -36,7 +43,7 @@ const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, 
               className="btn btn-success"
               onClick={onRun}
             >
-              Run All Above
+              Run All
             </button>
           </div>
         }

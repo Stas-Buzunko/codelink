@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import ace from 'brace';
 import 'brace/mode/python';
+import 'brace/mode/markdown';
 import { Provider } from 'react-redux'
 import App from './App'
 import { login, updateIndex, updateCode, updateResults } from './actions'

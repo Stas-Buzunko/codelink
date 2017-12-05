@@ -12,20 +12,36 @@ const createStoreWithFirebase = compose(
 )(createStore)
 
 let values = []
+let markdownValues = []
 
-if (window.location.hash) {
-  const withoutHash = window.location.hash.slice(1)
+const { hash } = window.location
+
+if (hash) {
+  const withoutHash = hash.slice(1)
   const parsedWithJSURL = JSURL.tryParse(withoutHash)
 
-  values = parsedWithJSURL
-    ? parsedWithJSURL
-    : withoutHash.split(',').map(undecoded => decodeURIComponent(undecoded))
+  if (parsedWithJSURL) {
+    values = parsedWithJSURL.code || []
+    markdownValues = parsedWithJSURL.markdown || []
+  } else {
+    const parsed = {}
+    withoutHash.split('&').forEach(undecoded => {
+      const parts = undecoded.split('=')
+      const array = parts[1].split(',').map(value => decodeURIComponent(value))
+      
+      parsed[parts[0]] = array
+    })
+
+    values = parsed.code || []
+    markdownValues = parsed.markdown || []
+  }
 }
 
 const initialState = {
   values,
   runFromIndex: null,
-  results: []
+  results: [],
+  markdownValues
 }
 
 const saveToFirebase = (getState, action) => {
