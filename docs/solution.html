@@ -89,12 +89,6 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
 
-
-      showModelSolution=”true”
-      3rd hidden Ace Editor to appear between the solution and tests Ace Editors
-      When the Run All button is pressed, the code from the middle code box will be loaded into the scope between the code from the top and bottom Ace editors.
-      All the code will then be executed and the output will be shown below the Ace editor.
-      This component will be used to develop Codelink problems by providing a way to test assertions in the bottom box.
     -->
     <script type="text/javascript">var exports = {};</script>
     <script type="text/babel" src="./Codelink.js"></script>
@@ -102,7 +96,7 @@
     <script type="text/babel">
 
       ReactDOM.render(
-        <CodeApp />,
+        <CodeApp showModelSolution={true} />,
         document.getElementById('root')
       )
     </script>

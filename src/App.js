@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import JSURL from 'jsurl'
 import Editor from './Editor'
 
-const numberOfInputs = 2
-
 const template = {
   "cells": [],
   "metadata": {
@@ -33,8 +31,15 @@ class CodeApp extends Component {
   constructor(props) {
     super(props)
 
+    const numberOfInputs = props.showModelSolution ? 3 : 2
+
     let values = []
     let markdownValues = []
+
+    for (let i = numberOfInputs; i >= 0; i--) {
+      markdownValues.push('')
+      values.push('')
+    }
 
     const { hash } = window.location
 
@@ -43,8 +48,29 @@ class CodeApp extends Component {
       const parsedWithJSURL = JSURL.tryParse(withoutHash)
 
       if (parsedWithJSURL) {
-        values = parsedWithJSURL.code || []
-        markdownValues = parsedWithJSURL.markdown || []
+        if (parsedWithJSURL.code) {
+          if (props.showModelSolution) {
+            values = [
+              ...parsedWithJSURL.code.slice(0,1),
+              '',
+              ...parsedWithJSURL.code.slice(1)
+            ]
+          } else {
+            values = parsedWithJSURL.code
+          }
+        }
+
+        if (parsedWithJSURL.markdown) {
+          if (props.showModelSolution) {
+            markdownValues = [
+              ...parsedWithJSURL.markdown.slice(0,1),
+              '',
+              ...parsedWithJSURL.markdown.slice(1)
+            ]
+          } else {
+            markdownValues = parsedWithJSURL.markdown
+          }
+        }
       } else {
         const parsed = {}
         withoutHash.split('&').forEach(undecoded => {
@@ -54,8 +80,29 @@ class CodeApp extends Component {
           parsed[parts[0]] = array
         })
 
-        values = parsed.code || []
-        markdownValues = parsed.markdown || []
+        if (parsed.code) {
+          if (props.showModelSolution) {
+            values = [
+              ...parsed.code.slice(0,1),
+              '',
+              ...parsed.code.slice(1)
+            ]
+          } else {
+            values = parsed.code
+          }
+        }
+
+        if (parsed.markdown) {
+          if (props.showModelSolution) {
+            markdownValues = [
+              ...parsed.markdown.slice(0,1),
+              '',
+              ...parsed.markdown.slice(1)
+            ]
+          } else {
+            markdownValues = parsed.markdown
+          }
+        }
       }
 
       if (props.urlLogger) {
@@ -71,7 +118,8 @@ class CodeApp extends Component {
       runToIndex: null,
       isRunning: null,
       markdownValues,
-      error: false
+      error: false,
+      numberOfInputs
     }
 
     const { uniqueKey = 0 } = props
@@ -106,10 +154,26 @@ doc['run-button'].bind('click', editor.run)
 
   generateUrl = (isJSURL = false) => {
     const { values, markdownValues } = this.state
+    const { showModelSolution = false } = this.props
+
+    // skip second code box if showModelSolution
+    const codeValues = showModelSolution
+      ? [
+          ...values.slice(0,1),
+          ...values.slice(2)
+        ]
+      : values
+
+    const markdownCodeValues = showModelSolution
+      ? [
+          ...markdownValues.slice(0,1),
+          ...markdownValues.slice(2)
+        ]
+      : markdownValues
 
     let encoded
 
-    const objectToEncode = {code: values, markdown: markdownValues}
+    const objectToEncode = {code: codeValues, markdown: markdownCodeValues}
 
     if (isJSURL) {
       encoded = JSURL.stringify(objectToEncode)
@@ -158,6 +222,8 @@ doc['run-button'].bind('click', editor.run)
     const { cells } = object
 
     if (Array.isArray(cells)) {
+      const { showModelSolution = false } = this.props
+
       let counter = 0
       const code = []
       const markdown = []
@@ -165,8 +231,16 @@ doc['run-button'].bind('click', editor.run)
       cells.forEach((cell, i) => {
         const value = cell.source.join('')
         if (cell.cell_type === 'code') {
+          if (showModelSolution && code.length === 1) {
+            // add emplty value for second box
+            code.push('')
+          }
           code.push(value)
         } else {
+          if (showModelSolution && markdown.length === 1) {
+            // add emplty value for second box
+            markdown.push('')
+          }
           markdown.push(value)
         }
         counter += value.length
@@ -183,10 +257,26 @@ doc['run-button'].bind('click', editor.run)
 
   downloadFile = () => {
     const { values, markdownValues } = this.state
+    const { showModelSolution = false } = this.props
+
+    const codeValues = showModelSolution
+      ? [
+          ...values.slice(0,1),
+          ...values.slice(2)
+        ]
+      : values
+
+    const markdownCodeValues = showModelSolution
+      ? [
+          ...markdownValues.slice(0,1),
+          ...markdownValues.slice(2)
+        ]
+      : markdownValues
+
     this.template = {...template}
-    // const file = 
-    this.generateFile({type: 'code', values})
-    this.generateFile({type: 'markdown', values: markdownValues})
+
+    this.generateFile({type: 'code', values: codeValues})
+    this.generateFile({type: 'markdown', values: markdownCodeValues})
 
     if (this.props.downloadIpynbLogger) {
       this.props.downloadIpynbLogger('Untitled.ipynb', this.template)
@@ -307,7 +397,7 @@ doc['run-button'].bind('click', editor.run)
     }))
   }
 
-  runAll = () => this.onIndexChange(numberOfInputs - 1)
+  runAll = () => this.onIndexChange(this.state.numberOfInputs - 1)
 
   render() {
     const { hideButtons = false, readOnlyTests = false, onUploadFile, problem = false } = this.props
@@ -317,7 +407,7 @@ doc['run-button'].bind('click', editor.run)
     const markdownLength = this.displayNumberOfCharacters(markdownValues)
     const totalLength = codeLength + markdownLength
 
-    const array = Array.from(Array(numberOfInputs).keys())
+    const array = Array.from(Array(this.state.numberOfInputs).keys())
 
     return (
       <div className="container">
@@ -328,7 +418,7 @@ doc['run-button'].bind('click', editor.run)
         {array.map(number =>
           <Editor
             isRunning={isRunning}
-            readOnly={readOnlyTests || problem && (number === array.length - 1)}
+            readOnly={readOnlyTests || (problem && (number === array.length - 1))}
             value={values[number]}
             markdownValue={markdownValues[number]}
             result={results[number]}
