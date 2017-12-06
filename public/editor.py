@@ -68,4 +68,4 @@ def run(*args):
 
         value = output + '\n' + ('<completed in %6.2f ms>' % ((time.perf_counter() - t0) * 1000.0))
 
-        window.updateResults[key](value, x)
+        window.updateResults[key](value, x, state)

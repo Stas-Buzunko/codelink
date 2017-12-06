@@ -317,7 +317,7 @@ doc['run-button'].bind('click', editor.run)
 
   render() {
     const { hideButtons = false, readOnlyTests = false, onUploadFile } = this.props
-    const { values, results, isRunning, markdownValues } = this.state
+    const { values, results, isRunning, markdownValues, problem = false } = this.state
 
     const codeLength = this.displayNumberOfCharacters(values)
     const markdownLength = this.displayNumberOfCharacters(markdownValues)
@@ -327,19 +327,16 @@ doc['run-button'].bind('click', editor.run)
 
     return (
       <div className="container">
-        {!!markdownLength &&
-          <div>
-            <p>Press Shift + Enter to execute code</p>
-            <p>Use double-click or click+enter on markdown boxes to edit them.</p>
-          </div>
-        }
+        <div>
+          <p>Press Shift + Enter to execute code</p>
+          <p>Use double-click or click+enter on markdown boxes to edit them.</p>
+        </div>
         {array.map(number =>
           <Editor
             isRunning={isRunning}
-            readOnly={readOnlyTests}
+            readOnly={readOnlyTests || problem && (number === array.length - 1)}
             value={values[number]}
             markdownValue={markdownValues[number]}
-            displayMarkdown={!!markdownLength}
             result={results[number]}
             onChange={value => this.onCodeChange(value, number)}
             onMarkdownChange={value => this.onMarkdownChange(value, number)}
