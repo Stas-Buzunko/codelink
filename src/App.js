@@ -335,6 +335,7 @@ doc['run-button'].bind('click', editor.run)
             readOnly={readOnlyTests}
             value={values[number]}
             markdownValue={markdownValues[number]}
+            displayMarkdown={!!markdownLength}
             result={results[number]}
             onChange={value => this.onCodeChange(value, number)}
             onMarkdownChange={value => this.onMarkdownChange(value, number)}

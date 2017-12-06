@@ -2,9 +2,9 @@ import React from 'react';
 import AceEditor from 'react-ace'
 import MarkdownEditor from './MarkdownEditor'
 
-const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, showButton = true, isRunning, markdownValue, onMarkdownChange }) => (
+const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, showButton = true, isRunning, markdownValue, onMarkdownChange, displayMarkdown }) => (
   <div className="col-lg-12" style={{marginTop: '20px'}}>
-    {markdownValue &&
+    {displayMarkdown &&
       <div>
         <MarkdownEditor isRunning={isRunning} value={markdownValue} onMarkdownChange={onMarkdownChange} />
         <hr />

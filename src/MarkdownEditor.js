@@ -58,7 +58,7 @@ class MarkdownEditor extends Component {
               onChange={value => onMarkdownChange(value)}
               editorProps={{$blockScrolling: true}}
               minLines={1}
-              maxLines={value.split(/\r\n|\r|\n/).length}
+              maxLines={value ? value.split(/\r\n|\r|\n/).length : 1}
               showLineNumbers={false}
               commands={[{   // commands is array of key bindings.
                 name: 'executeCode', //name for the key binding.
@@ -66,8 +66,11 @@ class MarkdownEditor extends Component {
                 exec: () => this.setState({isEditing: false})  //function to execute when keys are pressed.
               }]}
             />
-          : <div onClick={this.onClick} onKeyDown={this.handleKeyPress} tabIndex="0" style={{userSelect: 'none'}}>
-              
+          : <div
+              onClick={this.onClick}
+              onKeyDown={this.handleKeyPress}
+              tabIndex="0"
+              style={{userSelect: 'none', minHeight: '50px', backgroundColor: '#f5f5f5', border: '1px solid #ccc'}}>
               <Markdown escapeHtml={false} source={value} />
             </div>
         }
