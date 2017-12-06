@@ -73,7 +73,8 @@ class CodeApp extends Component {
       results: [],
       runToIndex: null,
       isRunning: null,
-      markdownValues
+      markdownValues,
+      error: false
     }
 
     const { uniqueKey = 0 } = props
@@ -261,7 +262,7 @@ doc['run-button'].bind('click', editor.run)
   onIndexChange = index => {
     const { updateIndex, uniqueKey = 0 } = this.props
 
-    this.setState({runToIndex: index, isRunning: Math.random()}, () => {
+    this.setState({runToIndex: index, isRunning: Math.random(), error: false}, () => {
       window.uniqueKey = uniqueKey
       window.runToIndex = index
       document.getElementById('run-button').click();
@@ -272,21 +273,24 @@ doc['run-button'].bind('click', editor.run)
     }
   }
 
-  updateResults = (value, index) => {
+  updateResults = (value, index, error) => {
+    const hasErrors = !error
+
     this.setState( state => ({
         results: [
           ...state.results.slice(0, index),
           value,
           ...state.results.slice(index + 1)
         ],
-        runToIndex: null
+        error: hasErrors || state.error
       }), 
       () => {
         if (index === this.state.runToIndex) {
           // last box was executed
+          this.setState({runToIndex: null})
 
           if (this.props.runAllLogger) {
-            this.props.runAllLogger(this.state.results)
+            this.props.runAllLogger(this.state.results, this.state.error)
           }
         }
       }

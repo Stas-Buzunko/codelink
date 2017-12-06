@@ -98,7 +98,7 @@ class CodeApp extends React.Component {
       values,
       results: [],
       runToIndex: null,
-      // error: 
+      error: false
     }
 
     const { uniqueKey = 0 } = props
@@ -285,7 +285,6 @@ doc['run-button'].bind('click', editor.run)
           value,
           ...state.results.slice(index + 1)
         ],
-        // runToIndex: null,
         error: hasErrors || state.error
       }), 
       () => {
