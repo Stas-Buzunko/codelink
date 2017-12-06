@@ -1,0 +1,65 @@
+.vote {
+    min-width: 46px;
+    text-align: center;
+}
+
+.vote-up-off, .vote-up-on, .vote-down-off, .vote-down-on, .star-on, .star-off {
+    height: 30px;
+}
+
+.vote-up-off {
+    background-position: 0 -170px;
+}
+
+.vote-up-off, .vote-up-on, .vote-down-off, .vote-down-on, .star-on, .star-off, .comment-up-off, .comment-up-on, .comment-flag, .comment-flag-off, .comment-flag-on, .flag-off, .vote-accepted-off, .vote-accepted-on {
+    text-indent: -9999em;
+    font-size: 1px;
+}
+.vote-up-off, .vote-down-off, .vote-accepted-off, .star-off, .comment-up-off, .flag-off {
+    cursor: pointer;
+}
+.vote-up-off, .vote-up-on, .vote-down-off, .vote-down-on, .star-on, .star-off, .vote-accepted-off, .vote-accepted-on {
+    display: block;
+    margin: 0 auto;
+    text-indent: -999em;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 2px;
+}
+
+.vote-up-off, .vote-up-on, .vote-down-off, .vote-down-on, .comment-up-off, .comment-up-on, .comment-flag, .comment-flag-off, .comment-flag-on, .edited-yes, .feed-icon, .vote-accepted-off, .vote-accepted-on, .vote-accepted-bounty, .badge-earned-check, .delete-tag, .grippie, .expander-arrow-hide, .expander-arrow-show, .expander-arrow-small-hide, .expander-arrow-small-show, .anonymous-gravatar, .badge1, .badge2, .badge3 {
+    /*background-image: url(./sprites.png?v=0786b22b9381);*/
+    background-image: url(./sprites.svg?v=1b3cdae197be),none;
+    background-size: initial;
+    background-repeat: no-repeat;
+    overflow: hidden;
+}
+
+.vote-count-post {
+    margin: 8px 0;
+}
+
+.vote span {
+    display: block;
+    color: #6a737c;
+}
+
+.vote-down-off, .vote-down-on {
+    margin-bottom: 10px;
+}
+
+.vote-up-off, .vote-up-on, .vote-down-off, .vote-down-on, .star-on, .star-off {
+    height: 30px;
+}
+.vote-down-off {
+    background-position: 0 -220px;
+    margin-bottom: 8px;
+}
+
+.vote-down-on {
+    background-position: -40px -220px;
+}
+
+.vote-up-on {
+    background-position: -40px -170px;
+}

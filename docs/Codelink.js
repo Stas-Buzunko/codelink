@@ -98,7 +98,7 @@ class CodeApp extends React.Component {
       values,
       results: [],
       runToIndex: null,
-
+      // error: 
     }
 
     const { uniqueKey = 0 } = props
@@ -264,7 +264,7 @@ doc['run-button'].bind('click', editor.run)
   onIndexChange = index => {
     const { updateIndex, uniqueKey = 0 } = this.props
 
-    this.setState({runToIndex: index}, () => {
+    this.setState({runToIndex: index, error: false}, () => {
       // window.state = this.state
       window.uniqueKey = uniqueKey
       window.runToIndex = index
@@ -276,21 +276,26 @@ doc['run-button'].bind('click', editor.run)
     }
   }
 
-  updateResults = (value, index) => {
+  updateResults = (value, index, error) => {
+    const hasErrors = !error
+
     this.setState( state => ({
         results: [
           ...state.results.slice(0, index),
           value,
           ...state.results.slice(index + 1)
         ],
-        runToIndex: null
+        // runToIndex: null,
+        error: hasErrors || state.error
       }), 
       () => {
         if (index === this.state.runToIndex) {
           // last box was executed
 
+          this.setState({runToIndex: null})
+
           if (this.props.runAllLogger) {
-            this.props.runAllLogger(this.state.results)
+            this.props.runAllLogger(this.state.results, this.state.error)
           }
         }
       }
@@ -306,7 +311,7 @@ doc['run-button'].bind('click', editor.run)
   runAll = () => this.onIndexChange(numberOfInputs - 1)
 
   render() {
-    const { hideButtons = false, readOnlyTests = false, onUploadFile } = this.props
+    const { hideButtons = false, readOnlyTests = false, onUploadFile, problem = false } = this.props
     const { values, results } = this.state
 
     const codeLength = this.displayNumberOfCharacters(values)
@@ -316,7 +321,7 @@ doc['run-button'].bind('click', editor.run)
       <div className="container">
         {array.map(number =>
           <Editor
-            readOnly={readOnlyTests}
+            readOnly={readOnlyTests || problem && (number === array.length - 1)}
             value={values[number]}
             result={results[number]}
             onChange={value => this.onCodeChange(value, number)}
@@ -324,7 +329,7 @@ doc['run-button'].bind('click', editor.run)
             key={number}
             onRun={() => this.onIndexChange(number)}
             runAll={this.runAll}
-            showButton={!readOnlyTests || (number === array.length -1) } />
+            showButton={!(readOnlyTests || problem) || (number === array.length - 1) } />
         )}
         <p>Number of characters: {codeLength}</p>
         {!hideButtons &&
