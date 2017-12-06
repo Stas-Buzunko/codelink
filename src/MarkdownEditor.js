@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import Markdown from 'react-markdown'
 import AceEditor from 'react-ace'
 
-// fix running
-
 class MarkdownEditor extends Component {
   constructor(props) {
     super(props)

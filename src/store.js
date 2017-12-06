@@ -101,7 +101,11 @@ const saveToFirebase = (getState, action) => {
 
   if (window.store) {
     const { firebase } = window.store
-    const payload = { type, value }
+    const payload = {
+      type,
+      value,
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    }
     const { user } = getState()
 
     if (user.uid) {
@@ -114,7 +118,7 @@ const saveToFirebase = (getState, action) => {
       payload.isAnonymous = action.isAnonymous
     }
 
-    firebase.database().ref('StateChanges').push(payload)
+    firebase.database().ref('logged_events').push(payload)
   }
 
   return true

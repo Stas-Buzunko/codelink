@@ -1,0 +1,13 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "api_tokens": {
+      ".read": "false",
+      ".write": "false"
+    },
+    "logged_events": {
+    	".indexOn": "createdAt"
+    }
+  }
+}
