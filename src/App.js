@@ -29,9 +29,6 @@ const template = {
   "nbformat_minor": 2
 }
 
-const input = '# This is a header\n\nAnd this is a paragraph'
-
-
 class CodeApp extends Component {
   constructor(props) {
     super(props)
@@ -160,8 +157,6 @@ doc['run-button'].bind('click', editor.run)
 
     const { cells } = object
 
-    console.log(cells)
-
     if (Array.isArray(cells)) {
       let counter = 0
       const code = []
@@ -223,7 +218,6 @@ doc['run-button'].bind('click', editor.run)
         }
   
         if (obj.type === 'code') {
-          // console.log()
           object['outputs'] = []
           object['execution_count'] = null
         }
@@ -316,8 +310,8 @@ doc['run-button'].bind('click', editor.run)
   runAll = () => this.onIndexChange(numberOfInputs - 1)
 
   render() {
-    const { hideButtons = false, readOnlyTests = false, onUploadFile } = this.props
-    const { values, results, isRunning, markdownValues, problem = false } = this.state
+    const { hideButtons = false, readOnlyTests = false, onUploadFile, problem = false } = this.props
+    const { values, results, isRunning, markdownValues } = this.state
 
     const codeLength = this.displayNumberOfCharacters(values)
     const markdownLength = this.displayNumberOfCharacters(markdownValues)

@@ -88,109 +88,21 @@
 
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
+
+
+      showModelSolution=”true”
+      3rd hidden Ace Editor to appear between the solution and tests Ace Editors
+      When the Run All button is pressed, the code from the middle code box will be loaded into the scope between the code from the top and bottom Ace editors.
+      All the code will then be executed and the output will be shown below the Ace editor.
+      This component will be used to develop Codelink problems by providing a way to test assertions in the bottom box.
     -->
     <script type="text/javascript">var exports = {};</script>
     <script type="text/babel" src="./Codelink.js"></script>
 
     <script type="text/babel">
-      const updateResults = (value, index) => ({
-        type: 'UPDATE_RESULTS',
-        value,
-        index
-      })
 
-      const updateCode = (value, index) => ({
-        type: 'UPDATE_CODE',
-        value,
-        index
-      })
-
-      const updateIndex = index => ({
-        type: 'UPDATE_INDEX',
-        index
-      })
-
-      const urlLogger = (format, url) => ({
-        type: 'LOADED_FROM_URL',
-        format,
-        url
-      })
-
-      const generateUrlLogger = url => ({
-        type: 'GENERATE_URL',
-        url
-      })
-
-      const generateJSUrlLogger = jsurl => ({
-        type: 'GENERATE_JSURL',
-        jsurl
-      })
-
-      const downloadIpynbLogger = (title, json) => ({
-        type: 'DOWNLOAD_IPYNB',
-        title,
-        json
-      })
-
-      const uploadIpynbLogger = json => ({
-        type: 'UPLOAD_IPYNB',
-        json
-      })
-
-      const runAllLogger = (output, errors) => ({
-        type: 'RUN_ALL',
-        output,
-        errors
-      })
-
-      class App extends React.Component {
-        constructor(props) {
-          super(props)
-
-          this.state = {
-            exportedText: '',
-            jsonToImport: ''
-          }
-        }
-
-        render() {
-          const { exportedText, jsonToImport } = this.state
-          return (
-            <div>
-              <div>
-                <h3> Default </h3>
-                <CodeApp uniqueKey={0} />
-              </div>
-              <hr />
-              <div>
-                <h3> Dispatching </h3>
-                <CodeApp
-                  uniqueKey={1}
-                  updateResults={(value, index) => console.log(updateResults(value, index))}
-                  updateIndex={index => console.log(updateIndex(index))}
-                  updateCode={(value, index) => console.log(updateCode(value, index))} 
-                  urlLogger={(format,url) => console.log(urlLogger(format,url))}
-                  generateUrlLogger={url => console.log(generateUrlLogger(url))}
-                  generateJSUrlLogger={url => console.log(generateJSUrlLogger(url))}
-                  downloadIpynbLogger={(title, json) => console.log(downloadIpynbLogger(title, json))}
-                  uploadIpynbLogger={(title, json) => console.log(uploadIpynbLogger(title, json))}
-                  runAllLogger={(output, errors) => console.log(runAllLogger(output, errors))}
-                />
-              </div>
-              <hr />
-              <div>
-                <h3> External Run All Button </h3>
-                <CodeApp uniqueKey={2} ref={ c => { this.codelink = c}} />
-                <button onClick={() => this.codelink && this.codelink.runAll()}>
-                  Run All
-                </button> 
-              </div>
-            </div>
-          )
-        }
-      }
       ReactDOM.render(
-        <App />,
+        <CodeApp />,
         document.getElementById('root')
       )
     </script>
