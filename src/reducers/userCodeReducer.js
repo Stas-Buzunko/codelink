@@ -1,9 +1,10 @@
-import { UPDATE_CODE, UPDATE_INDEX, UPDATE_RESULTS } from '../actions/' 
+import { UPDATE_CODE, UPDATE_INDEX, UPDATE_RESULTS, UPDATE_MARKDOWN } from '../actions/' 
 
 const initialState = {
   values: [],
   runFromIndex: null,
-  results: []
+  results: [],
+  markdownValues: []
 }
 
 const userCode = (state = initialState, action) => {
@@ -15,6 +16,15 @@ const userCode = (state = initialState, action) => {
           ...state.values.slice(0, action.index),
           action.value,
           ...state.values.slice(action.index + 1)
+        ]
+      }
+    case UPDATE_MARKDOWN:
+      return {
+        ...state,
+        markdownValues: [
+          ...state.markdownValues.slice(0, action.index),
+          action.value,
+          ...state.markdownValues.slice(action.index + 1)
         ]
       }
     case UPDATE_INDEX:

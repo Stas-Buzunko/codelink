@@ -36,7 +36,7 @@ class CodeApp extends Component {
     let values = []
     let markdownValues = []
 
-    for (let i = numberOfInputs; i >= 0; i--) {
+    for (let i = numberOfInputs; i > 0; i--) {
       markdownValues.push('')
       values.push('')
     }
@@ -395,6 +395,10 @@ doc['run-button'].bind('click', editor.run)
         ...state.markdownValues.slice(index + 1)
       ]
     }))
+
+    if (this.props.updateMarkdown) {
+      this.props.updateMarkdown(value, index)
+    }
   }
 
   runAll = () => this.onIndexChange(this.state.numberOfInputs - 1)

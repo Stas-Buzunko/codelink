@@ -158,7 +158,7 @@ class CodeApp extends React.Component {
     let values = []
     let markdownValues = []
 
-    for (let i = numberOfInputs; i >= 0; i--) {
+    for (let i = numberOfInputs; i > 0; i--) {
       markdownValues.push('')
       values.push('')
     }

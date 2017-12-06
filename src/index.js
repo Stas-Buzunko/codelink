@@ -5,8 +5,11 @@ import 'brace/mode/python';
 import 'brace/mode/markdown';
 import { Provider } from 'react-redux'
 import App from './App'
-import { login, updateIndex, updateCode, updateResults } from './actions'
+import { login, updateIndex, updateCode, updateResults, updateMarkdown } from './actions'
 import store from './store'
+
+// uncomment next line when use showModelSolution
+// window.showModelSolution = true
 
 // we need this to make python able read from store
 window.store = store
@@ -35,12 +38,14 @@ firebase.auth().onAuthStateChanged(user => {
 });
 
 
+
 ReactDOM.render(
   <Provider store={store}>
     <App
       updateResults={(value, index) => store.dispatch(updateResults(value, index))}
       updateIndex={index => store.dispatch(updateIndex(index))}
       updateCode={(value, index) => store.dispatch(updateCode(value, index))}
+      updateMarkdown={(value, index) => store.dispatch(updateMarkdown(value, index))}
       userCode={store.getState().userCode}
       hideButtons={false}
       readOnlyTests={false}

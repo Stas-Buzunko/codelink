@@ -11,8 +11,15 @@ const createStoreWithFirebase = compose(
   reactReduxFirebase(firebaseConfig)
 )(createStore)
 
+const numberOfInputs = window.showModelSolution ? 3 : 2
+console.log(numberOfInputs)
 let values = []
 let markdownValues = []
+
+for (let i = numberOfInputs; i > 0; i--) {
+  markdownValues.push('')
+  values.push('')
+}
 
 const { hash } = window.location
 
@@ -21,8 +28,29 @@ if (hash) {
   const parsedWithJSURL = JSURL.tryParse(withoutHash)
 
   if (parsedWithJSURL) {
-    values = parsedWithJSURL.code || []
-    markdownValues = parsedWithJSURL.markdown || []
+    if (parsedWithJSURL.code) {
+      if (window.showModelSolution) {
+        values = [
+          ...parsedWithJSURL.code.slice(0,1),
+          '',
+          ...parsedWithJSURL.code.slice(1)
+        ]
+      } else {
+        values = parsedWithJSURL.code
+      }
+    }
+
+    if (parsedWithJSURL.markdown) {
+      if (window.showModelSolution) {
+        markdownValues = [
+          ...parsedWithJSURL.markdown.slice(0,1),
+          '',
+          ...parsedWithJSURL.markdown.slice(1)
+        ]
+      } else {
+        markdownValues = parsedWithJSURL.markdown
+      }
+    }
   } else {
     const parsed = {}
     withoutHash.split('&').forEach(undecoded => {
@@ -32,8 +60,29 @@ if (hash) {
       parsed[parts[0]] = array
     })
 
-    values = parsed.code || []
-    markdownValues = parsed.markdown || []
+    if (parsed.code) {
+      if (window.showModelSolution) {
+        values = [
+          ...parsed.code.slice(0,1),
+          '',
+          ...parsed.code.slice(1)
+        ]
+      } else {
+        values = parsed.code
+      }
+    }
+
+    if (parsed.markdown) {
+      if (window.showModelSolution) {
+        markdownValues = [
+          ...parsed.markdown.slice(0,1),
+          '',
+          ...parsed.markdown.slice(1)
+        ]
+      } else {
+        markdownValues = parsed.markdown
+      }
+    }
   }
 }
 
