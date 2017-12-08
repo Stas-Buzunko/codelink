@@ -7,7 +7,8 @@ cache:
 script:
 - npm test
 - npm run build
-
-after_success:
-  - npm install -g firebase-tools
-  - firebase deploy — project test-5eae3 — token $FIREBASE_TOKEN.
+deploy:
+  provider: firebase
+  token:
+    secure: "$FIREBASE_TOKEN"
+  project: "test-5eae3"
