@@ -1,7 +1,6 @@
-import { UPDATE_CODE, UPDATE_INDEX, UPDATE_RESULTS, UPDATE_MARKDOWN } from '../actions/' 
+import { UPDATE_INDEX, UPDATE_RESULTS, UPDATE_MARKDOWN } from '../actions/'
 
 const initialState = {
-  values: [],
   runFromIndex: null,
   results: [],
   markdownValues: []
@@ -9,15 +8,6 @@ const initialState = {
 
 const userCode = (state = initialState, action) => {
   switch(action.type){
-    case UPDATE_CODE:
-      return {
-        ...state,
-        values: [
-          ...state.values.slice(0, action.index),
-          action.value,
-          ...state.values.slice(action.index + 1)
-        ]
-      }
     case UPDATE_MARKDOWN:
       return {
         ...state,

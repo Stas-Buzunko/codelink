@@ -13,6 +13,10 @@ class MarkdownEditor extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.isRunning !== nextProps.isRunning && nextProps.isRunning) {
       this.setState({isEditing: false})
+
+      if (this.props.onMarkdownRun) {
+        this.props.onMarkdownRun()
+      }
     }
   }
 
@@ -41,6 +45,14 @@ class MarkdownEditor extends React.Component {
     }
   }
 
+  switchToRender = () => {
+    this.setState({isEditing: false})
+
+    if (this.props.onMarkdownRun) {
+      this.props.onMarkdownRun()
+    }
+  }
+
   render() {
     const { isEditing } = this.state
     const { value, onMarkdownChange } = this.props
@@ -60,14 +72,14 @@ class MarkdownEditor extends React.Component {
               commands={[{   // commands is array of key bindings.
                 name: 'executeCode', //name for the key binding.
                 bindKey: { win: 'Shift-Enter', mac: 'Shift-Enter' }, //key combination used for the command.
-                exec: () => this.setState({isEditing: false})  //function to execute when keys are pressed.
+                exec: this.switchToRender  //function to execute when keys are pressed.
               }]}
             />
           : <div
               onClick={this.onClick}
               onKeyDown={this.handleKeyPress}
               tabIndex="0"
-              style={{userSelect: 'none', minHeight: '50px', backgroundColor: '#f5f5f5', border: '1px solid #ccc'}}>
+              style={{userSelect: 'none', minHeight: '50px'}}>
               <Markdown escapeHtml={false} source={value} />
             </div>
         }
@@ -76,10 +88,14 @@ class MarkdownEditor extends React.Component {
   }
 }
 
-const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, showButton = true, isRunning, markdownValue, onMarkdownChange }) => (
+const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, showButton = true, isRunning, markdownValue, onMarkdownChange, onMarkdownRun }) => (
   <div className="col-lg-12" style={{marginTop: '20px'}}>
     <div>
-      <MarkdownEditor isRunning={isRunning} value={markdownValue} onMarkdownChange={onMarkdownChange} />
+      <MarkdownEditor
+        isRunning={isRunning}
+        value={markdownValue}
+        onMarkdownChange={onMarkdownChange}
+        onMarkdownRun={onMarkdownRun} />
       <hr />
     </div>
     <div className="col-lg-6">
@@ -105,7 +121,7 @@ const Editor = ({ onRun, index, onChange, value = '', result, runAll, readOnly, 
       </div>
       <div className="row" style={{padding: 0, marginTop: '10px'}}>
         <div className="col-lg-8" style={{paddingLeft: 0}}>
-          <pre id={`editor-result-${index}`} style={{height: '100%'}}>
+          <pre id={`editor-result-${index}`} style={{height: '100%', backgroundColor: 'white', border: 0}}>
             {result}
           </pre>
         </div>
@@ -521,6 +537,15 @@ doc['run-button'].bind('click', editor.run)
 
   runAll = () => this.onIndexChange(this.state.numberOfInputs - 1)
 
+  onMarkdownRun = index => {
+    const { onMarkdownRun } = this.props
+    if (onMarkdownRun) {
+      const { markdownValues } = this.state
+
+      onMarkdownRun(markdownValues[index], index)
+    }
+  }
+
   render() {
     const { hideButtons = false, readOnlyTests = false, onUploadFile, problem = false } = this.props
     const { values, results, isRunning, markdownValues } = this.state
@@ -533,19 +558,16 @@ doc['run-button'].bind('click', editor.run)
 
     return (
       <div className="container">
-        <div>
-          <p>Press Shift + Enter to execute code</p>
-          <p>Use double-click or click+enter on markdown boxes to edit them.</p>
-        </div>
         {array.map(number =>
           <Editor
             isRunning={isRunning}
-            readOnly={readOnlyTests || problem && (number === array.length - 1)}
+            readOnly={readOnlyTests || (problem && (number === array.length - 1))}
             value={values[number]}
             markdownValue={markdownValues[number]}
             result={results[number]}
             onChange={value => this.onCodeChange(value, number)}
             onMarkdownChange={value => this.onMarkdownChange(value, number)}
+            onMarkdownRun={() => this.onMarkdownRun(number)}
             index={number}
             key={number}
             onRun={() => this.onIndexChange(number)}

@@ -5,7 +5,7 @@ import 'brace/mode/python';
 import 'brace/mode/markdown';
 import { Provider } from 'react-redux'
 import App from './App'
-import { login, updateIndex, updateCode, updateResults, updateMarkdown } from './actions'
+import { login, updateIndex, updateResults, updateMarkdown } from './actions'
 import store from './store'
 
 // uncomment next line when use showModelSolution
@@ -44,8 +44,7 @@ ReactDOM.render(
     <App
       updateResults={(value, index) => store.dispatch(updateResults(value, index))}
       updateIndex={index => store.dispatch(updateIndex(index))}
-      updateCode={(value, index) => store.dispatch(updateCode(value, index))}
-      updateMarkdown={(value, index) => store.dispatch(updateMarkdown(value, index))}
+      onMarkdownRun={(value, index) => store.dispatch(updateMarkdown(value, index))}
       userCode={store.getState().userCode}
       hideButtons={false}
       readOnlyTests={false}

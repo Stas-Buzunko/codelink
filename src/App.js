@@ -328,8 +328,6 @@ doc['run-button'].bind('click', editor.run)
   }
 
   onCodeChange = (value, index) => {
-    const { updateCode } = this.props
-
     this.setState(state => ({
       values: [
         ...state.values.slice(0, index),
@@ -337,10 +335,6 @@ doc['run-button'].bind('click', editor.run)
         ...state.values.slice(index + 1)
       ]
     }), this.updateGlobalState)
-
-    if (updateCode) {
-      updateCode(value, index)
-    }
   }
 
   onIndexChange = index => {
@@ -395,13 +389,18 @@ doc['run-button'].bind('click', editor.run)
         ...state.markdownValues.slice(index + 1)
       ]
     }))
-
-    if (this.props.updateMarkdown) {
-      this.props.updateMarkdown(value, index)
-    }
   }
 
   runAll = () => this.onIndexChange(this.state.numberOfInputs - 1)
+
+  onMarkdownRun = index => {
+    const { onMarkdownRun } = this.props
+    if (onMarkdownRun) {
+      const { markdownValues } = this.state
+
+      onMarkdownRun(markdownValues[index], index)
+    }
+  }
 
   render() {
     const { hideButtons = false, readOnlyTests = false, onUploadFile, problem = false } = this.props
@@ -415,10 +414,6 @@ doc['run-button'].bind('click', editor.run)
 
     return (
       <div className="container">
-        <div>
-          <p>Press Shift + Enter to execute code</p>
-          <p>Use double-click or click+enter on markdown boxes to edit them.</p>
-        </div>
         {array.map(number =>
           <Editor
             isRunning={isRunning}
@@ -428,6 +423,7 @@ doc['run-button'].bind('click', editor.run)
             result={results[number]}
             onChange={value => this.onCodeChange(value, number)}
             onMarkdownChange={value => this.onMarkdownChange(value, number)}
+            onMarkdownRun={() => this.onMarkdownRun(number)}
             index={number}
             key={number}
             onRun={() => this.onIndexChange(number)}

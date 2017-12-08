@@ -14,6 +14,10 @@ class MarkdownEditor extends Component {
   componentWillReceiveProps(nextProps) {
     if (this.props.isRunning !== nextProps.isRunning && nextProps.isRunning) {
       this.setState({isEditing: false})
+
+      if (this.props.onMarkdownRun) {
+        this.props.onMarkdownRun()
+      }
     }
   }
 
@@ -42,6 +46,14 @@ class MarkdownEditor extends Component {
     }
   }
 
+  switchToRender = () => {
+    this.setState({isEditing: false})
+
+    if (this.props.onMarkdownRun) {
+      this.props.onMarkdownRun()
+    }
+  }
+
   render() {
     const { isEditing } = this.state
     const { value, onMarkdownChange } = this.props
@@ -61,14 +73,14 @@ class MarkdownEditor extends Component {
               commands={[{   // commands is array of key bindings.
                 name: 'executeCode', //name for the key binding.
                 bindKey: { win: 'Shift-Enter', mac: 'Shift-Enter' }, //key combination used for the command.
-                exec: () => this.setState({isEditing: false})  //function to execute when keys are pressed.
+                exec: this.switchToRender  //function to execute when keys are pressed.
               }]}
             />
           : <div
               onClick={this.onClick}
               onKeyDown={this.handleKeyPress}
               tabIndex="0"
-              style={{userSelect: 'none', minHeight: '50px', backgroundColor: '#f5f5f5', border: '1px solid #ccc'}}>
+              style={{userSelect: 'none', minHeight: '50px'}}>
               <Markdown escapeHtml={false} source={value} />
             </div>
         }
