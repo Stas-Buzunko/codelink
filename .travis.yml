@@ -10,5 +10,5 @@ script:
 deploy:
   provider: firebase
   token:
-    secure: "$FIREBASE_TOKEN"
+    secure: $FIREBASE_TOKEN
   project: "test-5eae3"
