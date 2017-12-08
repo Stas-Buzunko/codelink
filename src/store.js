@@ -12,7 +12,6 @@ const createStoreWithFirebase = compose(
 )(createStore)
 
 const numberOfInputs = window.showModelSolution ? 3 : 2
-console.log(numberOfInputs)
 let values = []
 let markdownValues = []
 
