@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+- stable
+cache:
+  directories:
+  - node_modules
+script:
+- npm test
+- npm run build
+deploy:
+  provider: firebase
+  skip_cleanup: true
+  github_token: "$github_token"
+  local_dir: build
+  on:
+    branch: master
+env:
+  global:
+    secure: gdCFTR3/zzbmKB0zNpX+Tu0PRgee+x2BoI/rtx8rl9MVvR4XjqZl3HbR70MPqVp4+g9+8svO6D/TcKuHWw/HgMySbrN0aqZkzJ+MWnGdhSOe44CT5JirSiP+eGwN/84WvnQ3FvD9b8l7I5JlBuOHYhvewh6pDcyA2NE9cFBlIFhtslvhuI76XPWqtx4eZK2i48bhRM69MAYFQXVXlxyxfm3GW33lfl2diCLWPhumX256H05AxzQ0IqBq+bAUVts5yu1Y9ArGYz2xtmZ6ifu1u93g0vfrsVa+3gvqcLdw+7GglbZdSqSPw8fKK2mR+M0uz1kr5ooguml7ZEJCztF/oQgCu1xVDBn2apsd1frsGXEfuk1PjeH+orUmk0HhRNoxYK4lOL2QuagHOtwyfkTtLali4XoB83ykp/bAchr8OO8rWAx4G3yneagN9G5jKUaYBypKILmBqOJihbzKGeDV2KTWdoUFA6PaTcG4Z36fwuFXcB3HlxdzWl9srFxotyWOyr0eI/c5TL+VmCrJBUctuzVr5AM273DyDpat+UQdzjHWXsURgGjP5OH4kqTTnRrYxuAXo2Cs9mJ7y5GK/BVZyOBVp9DraDChMiH7TLbC6Zr3jiCUqU57YXur4sI9V+NYkCdARO7XvLd/Y/OweJuBccP/jYgXTs5AN+g+Gf+nipI=
