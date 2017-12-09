@@ -7,7 +7,9 @@ cache:
 script:
 - npm test
 - npm run build
-before_deploy: "echo 'ready?'"
+before_deploy:
+- cd ./functions && npm install && cd ..
+- "echo 'ready?'"
 deploy:
   skip_cleanup: true
   provider: firebase
