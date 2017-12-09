@@ -8,7 +8,7 @@ script:
 - npm test
 - npm run build
 deploy:
+  skip_cleanup: true
   provider: firebase
   token:
     secure: $FIREBASE_TOKEN
-  project: "test-5eae3"
