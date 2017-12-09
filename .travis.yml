@@ -9,10 +9,8 @@ script:
 - npm run build
 before_deploy:
 - cd ./functions && npm install && cd ..
-- "echo 'ready?'"
 deploy:
   skip_cleanup: true
   provider: firebase
   token:
     secure: LhJEwd4AsCq2xI62TLyXnkixfBJ43ARfdzQ7CpH5eBCUKsuJN21LvoZPSlRYxC0o3z1bKDGBT16R1/5rrntm7ivQSlLOcfBblhUCna0EMBwBViCudd1yqBgj7dBDGfLqY4cbhyx4lIuUk90GI9ms2L3aokHeDMLfYGi88xsyXOqp4jsGJOkcr2N8qyK1UH636RdX9Dnf0sD1wyXO0YFR7bNh609ILSTsl1kcwq4RNew/b1007oznJcXayYHsAuRj8Z2U1nisqR13lSBqrqavVAcZCvP511JJBNSeiVYUqsZwKtJHXq/d9P4Th8UF6xZKkJ1uXTgtcDHnNHqdfp+FEgmAG+dzGExGnODLJzUv3W750uP23ePw5lEnLT45N3FHPxjrOTXZ7E6rPwedp/iSffDRaTV5Kv7Z+5VLocSoOh7+9qR1TlZCNRcY7Xns1HEKmhEU12GU11fsOqpXvQJuybL9+4h4g52Ayg2AV3baY5If4WVD3yDCiXy0JNrhhH28X76qh3xVwmuBdyKejYxXGNLekWV3W8BCDD5L/wxvhoviZ/d7Hn44kcE7aBYhs/iB4Ys/7aQKnAw3M7aNcM1p2WELB+FBIAUL2+qzeTMNzGrQqMKEhHZda4G5hJGOQtKtM889IolQv2+P7NPzoX1ZwMBrvlkG1Pp7oJEIi6rdnr4=
-after_deploy: "echo 'deployed!'"
