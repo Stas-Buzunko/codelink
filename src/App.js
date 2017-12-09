@@ -34,7 +34,9 @@ class CodeApp extends Component {
     const numberOfInputs = props.showModelSolution ? 3 : 2
 
     let values = []
-    let markdownValues = []
+    let markdownValues = props.showModelSolution 
+      ? ['Put your code here', '', 'These assertion tests should pass']
+      : ['Put your code here', 'These assertion tests should pass']
 
     for (let i = numberOfInputs; i > 0; i--) {
       markdownValues.push('')
