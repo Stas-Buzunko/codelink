@@ -10,7 +10,7 @@
     	".indexOn": "createdAt"
     },
     "problems": {
-      ".read": "auth != null", // read by all?
+      ".read": "auth != null",
       "$problemKey": {
         ".write": "auth != null && (
           newData.child('owner').val() == auth.uid ||
@@ -54,12 +54,12 @@
           data.exists() && data.child('owner').val() == auth.uid 
         )",
         "password" : {
-          ".read": "false", // admin?
+          ".read": "false",
         }
       }
     },
     "studentCoursePasswords": {
-      ".read": "false", // admin?
+      ".read": "false",
       "$courseKey": {
         "$studentKey": {
           ".write": "auth != null && !data.exists() && $studentKey == auth.uid &&
@@ -89,7 +89,7 @@
             root.child('paths/' + $pathKey + '/owner').val() == auth.uid
           ",
           "$problemKey": {
-            "ipynb": true // need to check this again
+            "ipynb": true
           }
         },
         "ipynb": "false"
