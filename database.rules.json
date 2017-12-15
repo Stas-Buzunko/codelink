@@ -8,6 +8,92 @@
     },
     "logged_events": {
     	".indexOn": "createdAt"
+    },
+    "problems": {
+      ".read": "auth != null", // read by all?
+      "$problemKey": {
+        ".write": "auth != null && (
+          newData.child('owner').val() == auth.uid ||
+          data.exists() && data.child('owner').val() == auth.uid
+        )"
+      }
+    },
+    "paths": {
+      "$pathKey": {
+        ".read": "auth != null && data.exists() && (data.child('owner').val() == auth.uid || data.child('isFeatured') == true)",
+        ".write": "auth != null && (
+          !data.exists() && newData.child('owner').val() == auth.uid ||
+          data.exists() && (
+            data.child('owner').val() == auth.uid ||
+            data.child('assistants/').exists() && data.child('assistants/' + auth.uid).val() == true
+          )
+        )"
+      }
+    },
+    "pathProblems": {
+      "$pathKey": {
+        ".write": "auth != null && (
+          data.exists() && root.child('problems/' + data.child('problemKey').val()).exists() && (
+            root.child('problems/' + data.child('problemKey').val() + '/owner').val() == auth.uid ||
+            data.child('assistants/').exists() && 
+            root.child('problems/' + data.child('problemKey').val() + '/assistants/' + auth.uid).val() == auth.uid
+          ) ||
+          !data.exists() && newData.child('problemKey').exists() && (
+            root.child('problems/' + newData.child('problemKey').val()).exists() && (
+            root.child('problems/' + newData.child('problemKey').val() + '/owner').val() == auth.uid ||
+            data.child('assistants/').exists() && 
+            root.child('problems/' + newData.child('problemKey').val() + '/assistants/' + auth.uid).val() == auth.uid
+          )
+        )"
+      }
+    },
+    "courses": {
+      "$courseKey": {
+        ".write": "auth != null && (
+          !data.exists() && newData.child('owner').exists() && newData.child('owner').val() == auth.uid ||
+          data.exists() && data.child('owner').val() == auth.uid 
+        )",
+        "password" : {
+          ".read": "false", // admin?
+        }
+      }
+    },
+    "studentCoursePasswords": {
+      ".read": "false", // admin?
+      "$courseKey": {
+        "$studentKey": {
+          ".write": "auth != null && !data.exists() && $studentKey == auth.uid &&
+          root.child('courses/' + $courseKey).exists() &&
+          root.child('courses/' + $courseKey + '/password').val() == newData.val()"
+        }
+      }
+    },
+    "courseMembers": {
+      ".read": "auth != null",
+      "$courseKey": {
+        "$studentKey": {
+          ".write": "auth != null && $studentKey == auth.uid &&
+            root.child('studentCoursePasswords/' + $courseKey).exists() &&
+            root.child('studentCoursePasswords/' + $courseKey + '/' + $studentKey).exists()
+          "
+        }
+      }
+    },
+    "solutions": {
+      ".read": "false",
+      "$userKey": {
+        ".read": "auth != null && $userKey == auth.uid)",
+        ".write": "auth != null && $userKey == auth.uid",
+        "$pathKey": {
+          ".read": "auth != null && root.child('paths/' + $pathKey).exists() &&
+            root.child('paths/' + $pathKey + '/owner').val() == auth.uid
+          ",
+          "$problemKey": {
+            "ipynb": true // need to check this again
+          }
+        },
+        "ipynb": "false"
+      }
     }
   }
 }
