@@ -1,8 +1,8 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyCoYrHhHNmZPbQUrH2SiStUAcigh69Cg0A",
-  authDomain: "test-5eae3.firebaseapp.com",
-  databaseURL: "https://test-5eae3.firebaseio.com",
-  projectId: "test-5eae3",
-  storageBucket: "test-5eae3.appspot.com",
-  messagingSenderId: "133800159142"
+  apiKey: "AIzaSyBVjHYegBKTRnT1Y9m_Qyd9NflIzjEPrwM",
+  authDomain: "codelink-dev.firebaseapp.com",
+  databaseURL: "https://codelink-dev.firebaseio.com",
+  projectId: "codelink-dev",
+  storageBucket: "codelink-dev.appspot.com",
+  messagingSenderId: "616390287821"
 }
