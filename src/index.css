@@ -21,3 +21,97 @@ body {
 .ace_active-line {
   background: none !important;
 }
+h3 {
+  margin:10px 0;
+}
+.top_menu {
+  display: flex;
+  justify-content: flex-start;
+  height: 80px;
+  background-color: blue;
+  align-items: center;
+}
+.top_menu-button {
+  background-color: yellow;
+  border-radius: 6px;
+  height: 30px;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  width: 80px;
+}
+.top_menu_right {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+}
+.top_menu_left{
+  width: 20%;
+  padding-left: 20px;
+  border-right: 1px solid grey;
+  box-shadow: 1px 0 0.5px black;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.left_menu {
+  display: flex;
+  flex-direction: column;
+  width:20%;
+  padding-left:20px;
+  border-right: 1px solid grey;
+  box-shadow: 1px 0 0.5px grey;
+}
+.main-desk {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+.container {
+  width: 100%;
+  padding: 0 30px;
+}
+.controllers {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 50px;
+}
+.controllers_button {
+  border:none;
+  background-color: purple;
+  color: white;
+  margin:0 10px;
+  width: 130px;
+  height: 30px; 
+}
+.table_header {
+  display: flex;
+}
+.table_body {
+
+}
+.table_row {
+  display: flex;
+  flex-direction: row;
+  padding-left: 20px;
+  align-items: center;
+}
+.table_row-edit {
+  background-color: purple;
+  border: none;
+  color: white;
+  width: 10%;
+}
+.table_row-updown {
+  width: 10%;
+  text-align: center;
+}
+.table_row-lvl {
+  width: 10%;
+  text-align: center;
+}
+
+

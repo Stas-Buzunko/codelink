@@ -8,6 +8,7 @@ import Statistics from './Statistics'
 import Paths from './Paths'
 import Courses from './Courses'
 import PrivateRoute from './PrivateRoute'
+import TopMenu from './TopMenu'
 
 class App extends Component {
   constructor(props) {
@@ -75,25 +76,46 @@ class App extends Component {
       <div>
         <BrowserRouter>
           <div>
-            <div className="top_menu">
-              {!user
-                ? <button onClick={this.loginWithGoogle}>Login</button>
-                : <button onClick={() => firebase.auth().signOut()}>Logout</button>
-              }
+            <TopMenu
+              user={user}
+              onLogout={() => firebase.auth().signOut()}
+              onLogin={this.loginWithGoogle} />
+            <div className="main-desk">
               {user &&
                 <div className="left_menu">
-                  <Link to="/">Main</Link>
-                  <Link to="/paths">Paths</Link>
-                  <Link to="/courses">Courses</Link>
-                  <Link to="/statistics">Statistics</Link>
+                  <Link to="/">
+                    <h4>
+                      <img alt="" src="http://via.placeholder.com/15x15" style={{marginRight:'5px'}}/>
+                      Main
+                    </h4>
+                  </Link>
+                  <Link to="/paths">
+                    <h4>
+                      <img alt="" src="http://via.placeholder.com/15x15" style={{marginRight:'5px'}}/>
+                      Paths
+                    </h4>
+                  </Link>
+                  <Link to="/courses">
+                    <h4>
+                      <img alt="" src="http://via.placeholder.com/15x15" style={{marginRight:'5px'}}/>
+                      Courses
+                    </h4>
+                  </Link>
+                  <Link to="/statistics">
+                    <h4>
+                      <img alt="" src="http://via.placeholder.com/15x15" style={{marginRight:'5px'}}/>
+                      Statistics
+                    </h4>
+                  </Link>
                 </div>
               }
-            </div>
+              
 
-            <Route exact path="/" component={Home}/>
-            <PrivateRoute path="/courses" component={Courses} user={user} />
-            <PrivateRoute path="/paths" component={Paths} user={user} />
-            <PrivateRoute path="/statistics" component={Statistics} user={user} />
+              <Route exact path="/" component={Home}/>
+              <PrivateRoute path="/courses" component={Courses} user={user} />
+              <PrivateRoute path="/paths" component={Paths} user={user} />
+              <PrivateRoute path="/statistics" component={Statistics} user={user} />
+            </div>
           </div>
         </BrowserRouter>
       </div>

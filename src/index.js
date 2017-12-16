@@ -6,6 +6,7 @@ import 'brace/mode/markdown';
 import { Provider } from 'react-redux'
 import App from './App'
 import store from './store'
+import './index.css'
 
 // uncomment next line when use showModelSolution
 // window.showModelSolution = true
