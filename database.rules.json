@@ -1,12 +1,12 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null",
     "api_tokens": {
       ".read": "false",
       ".write": "false"
     },
     "logged_events": {
+      ".read": "auth != null",
+      ".write": "auth != null",
     	".indexOn": "createdAt"
     },
     "problems": {
@@ -19,6 +19,7 @@
       }
     },
     "paths": {
+      ".read": "auth != null",
       "$pathKey": {
         ".read": "auth != null && data.exists() && (data.child('owner').val() == auth.uid || data.child('isFeatured') == true)",
         ".write": "auth != null && (
@@ -31,6 +32,7 @@
       }
     },
     "pathProblems": {
+      ".read": "auth != null",
       "$pathKey": {
         ".write": "auth != null && (
           data.exists() && root.child('problems/' + data.child('problemKey').val()).exists() && (
@@ -48,6 +50,7 @@
       }
     },
     "courses": {
+      ".read": "auth != null",
       "$courseKey": {
         ".write": "auth != null && (
           !data.exists() && newData.child('owner').exists() && newData.child('owner').val() == auth.uid ||
@@ -88,11 +91,7 @@
           ".read": "auth != null && root.child('paths/' + $pathKey).exists() &&
             root.child('paths/' + $pathKey + '/owner').val() == auth.uid
           ",
-          "$problemKey": {
-            "ipynb": true
-          }
-        },
-        "ipynb": "false"
+        }
       }
     }
   }
