@@ -14,6 +14,9 @@ global.fbConfig = {
 }
 
 global.Firebase = Firebase
+global.console = {
+  log: () => {}
+}
 
 // Swallow firebase reinitialize error (useful when using watch)
 try {
