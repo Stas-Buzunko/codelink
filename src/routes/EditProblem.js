@@ -2,10 +2,6 @@ import React, { Component } from 'react'
 import Codelink from '../components/Codelink'
 import * as firebase from 'firebase'
 
-// Model solution is saved somewhere different than the codelink problem (4-boxes) which will be shown to others. 
-// Users should be able to come back and edit one of their problems. 
-// Saved codelinks are just problems that you can download and share. 
-
 class EditProblem extends Component {
   constructor(props) {
     super(props)
@@ -52,7 +48,7 @@ class EditProblem extends Component {
 
   saveProblem = () => {
     const state = window.state.solution
-    const { user, history, match } = this.props
+    const { history, match } = this.props
     const { name } = this.state
     const { id } = match.params
 
