@@ -39,7 +39,6 @@ class CodeApp extends Component {
       : ['Put your code here', 'These assertion tests should pass']
 
     for (let i = numberOfInputs; i > 0; i--) {
-      markdownValues.push('')
       values.push('')
     }
 
@@ -194,6 +193,15 @@ doc['run-button'].bind('click', editor.run)
     }
 
     window.location.hash = encoded
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.showModelSolution && this.props.values !== nextProps.values) {
+      this.setState({values: nextProps.values})
+    }
+    if (this.props.showModelSolution && this.props.markdownValues !== nextProps.markdownValues) {
+      this.setState({markdownValues: nextProps.markdownValues})
+    }
   }
 
   serialize = obj =>

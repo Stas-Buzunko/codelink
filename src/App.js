@@ -3,12 +3,14 @@ import * as firebase from 'firebase'
 import { login } from './actions'
 import { connect } from 'react-redux'
 import { BrowserRouter, Route, Link } from "react-router-dom"
-import Home from './Home'
-import Statistics from './Statistics'
-import Paths from './Paths'
-import Courses from './Courses'
-import PrivateRoute from './PrivateRoute'
-import TopMenu from './TopMenu'
+import Home from './routes/Home'
+import Statistics from './routes/Statistics'
+import Paths from './routes/Paths'
+import Courses from './routes/Courses'
+import NewProblem from './routes/NewProblem'
+import EditProblem from './routes/EditProblem'
+import PrivateRoute from './utils/PrivateRoute'
+import TopMenu from './components/TopMenu'
 
 class App extends Component {
   constructor(props) {
@@ -115,6 +117,9 @@ class App extends Component {
               <PrivateRoute path="/courses" component={Courses} user={user} />
               <PrivateRoute path="/paths" component={Paths} user={user} />
               <PrivateRoute path="/statistics" component={Statistics} user={user} />
+              <PrivateRoute path="/new" exact component={NewProblem} user={user} />
+              <PrivateRoute path="/edit/:id" exact component={EditProblem} user={user} />
+
             </div>
           </div>
         </BrowserRouter>

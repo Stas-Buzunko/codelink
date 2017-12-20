@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
-import { updateIndex, updateResults, updateMarkdown } from './actions'
-import Codelink from './Codelink'
+import { updateIndex, updateResults, updateMarkdown } from '../actions'
+import Codelink from '../components/Codelink'
 
 const Home = () =>
   <Codelink

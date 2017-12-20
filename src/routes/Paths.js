@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import _ from 'lodash'
+import { Link } from "react-router-dom"
+import * as firebase from 'firebase'
 
 const paths = {uniqueKey: {
   title: 'Intro to Python Path',
@@ -24,8 +26,22 @@ class Paths extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
+    const { user } = this.props
     // setup firebase listener here
+    this.ref = firebase.database().ref('problems').orderByChild('owner').equalTo(user.uid)
+
+    this.ref.on('value', snapshot => {
+      const problems = snapshot.val()
+
+      if (problems) {
+        this.setState({notListedProblems: problems})
+      }
+    })
+  }
+
+  componentWillUnmount() {
+    this.ref.off()
   }
 
   addNewProblem = () => {
@@ -75,12 +91,12 @@ class Paths extends Component {
 
   render() {
     const { notListedProblems, paths } = this.state
-console.log(paths)
+
     return (
       <div className="container">
         <div className="controllers">
           <button className="controllers_button">+ Add Path</button>
-          <button className="controllers_button" onClick={this.addNewProblem}>+ Add Problem</button>
+          <Link to='/new'><button className="controllers_button">+ Add Problem</button></Link>
         </div>
 
         {_.map(paths, (path, key) =>
@@ -111,15 +127,17 @@ console.log(paths)
         <div>
           <h3>Problems not on a path</h3>
           <div className="table_body">
-            {notListedProblems.map((path, i) =>
-              <div key={i} className="table_row">
+            {_.map(notListedProblems, ((path, key) =>
+              <div key={key} className="table_row">
                 <h4 style={{width:'30%'}}>{path.name}</h4>
-                <button className="table_row-edit">
-                  <img alt="" src="http://via.placeholder.com/15x15" style={{marginRight:'5px'}}/>Edit
-                </button>
+                <Link to={`/edit/${key}`}>
+                  <button className="table_row-edit">
+                    <img alt="" src="http://via.placeholder.com/15x15" style={{marginRight:'5px'}}/>Edit
+                  </button>
+                </Link>
                 <button className="table_row-edit" style={{width:'20%',margin:'0 5%'}}>+ Add to path</button>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>
