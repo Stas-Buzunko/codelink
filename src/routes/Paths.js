@@ -2,46 +2,47 @@ import React, { Component } from 'react'
 import _ from 'lodash'
 import { Link } from "react-router-dom"
 import * as firebase from 'firebase'
-
-const paths = {uniqueKey: {
-  title: 'Intro to Python Path',
-  problems: [
-    {name: 'Sum', level: 1, priority: 1},
-    {name: 'Subtract', level: 1, priority: 2},
-    {name: 'Divide', level: 2, priority: 3},
-    {name: 'If then', level: 2, priority: 4}
-  ],
-  showProblems: false
-}}
-
-const paths2 = [{name: 'Awesome problem', level: 1}, {name: 'Http access', level: 1}]
+import Dialog, { DialogContent } from 'material-ui/Dialog';
 
 class Paths extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      paths,
-      notListedProblems: paths2
+      paths: {},
+      notListedProblems: {},
+      showModal: false,
+      pathName: '',
+      isFeatured: false
     }
   }
 
   componentDidMount() {
     const { user } = this.props
     // setup firebase listener here
-    this.ref = firebase.database().ref('problems').orderByChild('owner').equalTo(user.uid)
+    this.problemsRef = firebase.database().ref('problems').orderByChild('owner').equalTo(user.uid)
+    this.pathsRef = firebase.database().ref('paths').orderByChild('owner').equalTo(user.uid)
 
-    this.ref.on('value', snapshot => {
+    this.problemsRef.on('value', snapshot => {
       const problems = snapshot.val()
 
       if (problems) {
         this.setState({notListedProblems: problems})
       }
     })
+
+    this.pathsRef.on('value', snapshot => {
+      const paths = snapshot.val()
+
+      if (paths) {
+        this.setState({paths})
+      }
+    })
   }
 
   componentWillUnmount() {
-    this.ref.off()
+    this.problemsRef.off()
+    this.pathsRef.off()
   }
 
   addNewProblem = () => {
@@ -87,15 +88,41 @@ class Paths extends Component {
       }
     })
   }
+
+  createPath = () => {
+    const { pathName, isFeatured } = this.state
+
+    if (!pathName) {
+      return alert('Please, name your path')
+    }
+
+    const { uid } = this.props.user
+
+    firebase.database().ref('paths').push({
+      title: pathName,
+      owner: uid,
+      assistants: null,
+      isFeatured
+    })
+    .then(() => this.setState({showModal: false, pathName: '', isFeatured: false}))
+  }
     
 
   render() {
-    const { notListedProblems, paths } = this.state
+    const { notListedProblems, paths, showModal, pathName, isFeatured } = this.state
 
     return (
       <div className="container">
+        <Dialog open={showModal} onClose={() => this.setState({showModal: false})} aria-labelledby="simple-dialog-title">
+          <DialogContent>
+            <input value={pathName} onChange={e => this.setState({pathName: e.target.value})} placeholder="Path name" />
+            <p>Is featured? </p>
+            <input type="checkbox" value={isFeatured} onChange={() => this.setState({isFeatured: !isFeatured})} />
+            <button onClick={this.createPath}>Save</button>
+          </DialogContent>
+        </Dialog>
         <div className="controllers">
-          <button className="controllers_button">+ Add Path</button>
+          <button className="controllers_button" onClick={() => this.setState({showModal: true})}>+ Add Path</button>
           <Link to='/new'><button className="controllers_button">+ Add Problem</button></Link>
         </div>
 
@@ -105,7 +132,7 @@ class Paths extends Component {
               <h3 style={{width:'60%'}} onClick={() => this.togglePath(key)}>{path.title}</h3>
               <h3 style={{width:'11%',textAlign:'center'}}>Level</h3>
             </div>
-            {path.showProblems &&
+            {path.problems && path.showProblems &&
               <div className="table_body">
                 {path.problems.sort((a,b) => a.priority - b.priority).map((problem, i) =>
                   <div key={i} className="table_row">
