@@ -9,6 +9,7 @@ import store from './store'
 import './index.css'
 
 // uncomment next line when use showModelSolution
+// refactor this later
 // window.showModelSolution = true
 
 ace.config.set('basePath', 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.9/');

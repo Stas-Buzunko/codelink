@@ -6,3 +6,7 @@ export const firebaseConfig = {
   storageBucket: "codelink-dev.appspot.com",
   messagingSenderId: "616390287821"
 }
+
+export const APP_SETTING = {
+  DrawerWidth: 250,
+}

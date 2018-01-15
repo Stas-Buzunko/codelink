@@ -11,13 +11,20 @@ import NewProblem from './routes/NewProblem'
 import EditProblem from './routes/EditProblem'
 import PrivateRoute from './utils/PrivateRoute'
 import TopMenu from './components/TopMenu'
+import AppFrame from './AppFrame'
+
 
 class App extends Component {
   constructor(props) {
     super(props)
 
+    let user = localStorage.getItem('codelinkUser')
+    if (user) {
+      user = JSON.parse(user)
+    }
+
     this.state = {
-      user: null
+      user,
     }
   }
 
@@ -28,16 +35,16 @@ class App extends Component {
         // check if it's google login, not anonymous
 
         if (!user.isAnonymous) {
-          console.log(2)
           this.setState({user})
+          localStorage.setItem('codelinkUser', JSON.stringify(user))
         } else {
-          console.log(1)
           firebase.database().ref('Logs').push(`Anonymous user ${user.uid} has been logged in.`)
           // this.props.login(uid, isAnonymous)
         }
       } else {
         // No user is signed in.
         this.setState({user: null})
+        localStorage.removeItem('codelinkUser')
 
         // if not signed in, then log in him Anonymously
         firebase.auth().signInAnonymously()
@@ -77,13 +84,13 @@ class App extends Component {
     return (
       <div>
         <BrowserRouter>
-          <div>
-            <TopMenu
-              user={user}
-              onLogout={() => firebase.auth().signOut()}
-              onLogin={this.loginWithGoogle} />
+          <AppFrame user={user} onLogout={() => firebase.auth().signOut()} onLogin={this.loginWithGoogle} >
+            {/*<TopMenu
+                          user={user}
+                          onLogout={() => firebase.auth().signOut()}
+                          onLogin={this.loginWithGoogle} />*/}
             <div className="main-desk">
-              {user &&
+              {/*user &&
                 <div className="left_menu">
                   <Link to="/">
                     <h4>
@@ -110,8 +117,7 @@ class App extends Component {
                     </h4>
                   </Link>
                 </div>
-              }
-              
+              */}
 
               <Route exact path="/" component={Home}/>
               <PrivateRoute path="/courses" component={Courses} user={user} />
@@ -121,7 +127,7 @@ class App extends Component {
               <PrivateRoute path="/edit/:id" exact component={EditProblem} user={user} />
 
             </div>
-          </div>
+          </AppFrame>
         </BrowserRouter>
       </div>
     )
