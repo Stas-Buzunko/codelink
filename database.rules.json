@@ -56,10 +56,7 @@
         ".write": "auth != null && (
           !data.exists() && newData.child('owner').exists() && newData.child('owner').val() == auth.uid ||
           data.exists() && data.child('owner').val() == auth.uid 
-        )",
-        "password" : {
-          ".read": "false",
-        }
+        )"
       }
     },
     "studentCoursePasswords": {
@@ -67,8 +64,8 @@
       "$courseKey": {
         "$studentKey": {
           ".write": "auth != null && !data.exists() && $studentKey == auth.uid &&
-          root.child('courses/' + $courseKey).exists() &&
-          root.child('courses/' + $courseKey + '/password').val() == newData.val()"
+          root.child('coursePasswords/' + $courseKey).exists() &&
+          root.child('coursePasswords/' + $courseKey).val() == newData.val()"
         }
       }
     },
@@ -93,6 +90,21 @@
             root.child('paths/' + $pathKey + '/owner').val() == auth.uid
           ",
         }
+      }
+    },
+    "coursePasswords": {
+      ".read": "false",
+      "$courseKey": {
+        ".write": "auth != null && (
+          !root.child('courses/' + $courseKey).exists() ||
+          root.child('courses/' + $courseKey).exists() &&
+          root.child('courses/' + $courseKey + '/owner').val() == auth.uid)"
+      }
+    },
+    "users": {
+      "$userKey": {
+        ".read": "auth !== null && auth.uid == $userKey",
+        ".write": "auth !== null && auth.uid == $userKey",
       }
     }
   }

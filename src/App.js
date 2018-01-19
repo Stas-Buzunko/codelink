@@ -12,7 +12,8 @@ import EditProblem from './routes/EditProblem'
 import PrivateRoute from './utils/PrivateRoute'
 import TopMenu from './components/TopMenu'
 import AppFrame from './AppFrame'
-
+import Course from './routes/Course'
+import _ from 'lodash'
 
 class App extends Component {
   constructor(props) {
@@ -31,12 +32,23 @@ class App extends Component {
   componentWillMount() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
+        console.log('logged in')
         // User is signed in.
         // check if it's google login, not anonymous
 
         if (!user.isAnonymous) {
           this.setState({user})
           localStorage.setItem('codelinkUser', JSON.stringify(user))
+
+          firebase.database().ref('users/' + user.uid).on('value', snapshot => {
+            const object = snapshot.val()
+
+            if (object) {
+              const updatedUser = {...this.state.user, ...object}
+
+              this.setState({user: updatedUser})
+            }
+          })
         } else {
           firebase.database().ref('Logs').push(`Anonymous user ${user.uid} has been logged in.`)
           // this.props.login(uid, isAnonymous)
@@ -121,6 +133,7 @@ class App extends Component {
 
               <Route exact path="/" component={Home}/>
               <PrivateRoute path="/courses" component={Courses} user={user} />
+              <PrivateRoute path="/course/:id" component={Course} user={user} />
               <PrivateRoute path="/paths" component={Paths} user={user} />
               <PrivateRoute path="/statistics" component={Statistics} user={user} />
               <PrivateRoute path="/new" exact component={NewProblem} user={user} />
