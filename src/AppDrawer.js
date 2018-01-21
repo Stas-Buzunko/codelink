@@ -64,7 +64,7 @@ function AppDrawer(props, context) {
         </Drawer>
       </Hidden>
 
-      <Hidden lgDown implementation="css">
+      <Hidden mdDown implementation="css">
         <Drawer
           classes={{
             paper: classes.paper,

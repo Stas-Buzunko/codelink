@@ -32,21 +32,19 @@ class App extends Component {
   componentWillMount() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        console.log('logged in')
+
         // User is signed in.
         // check if it's google login, not anonymous
-
         if (!user.isAnonymous) {
-          this.setState({user})
-          localStorage.setItem('codelinkUser', JSON.stringify(user))
 
           firebase.database().ref('users/' + user.uid).on('value', snapshot => {
-            const object = snapshot.val()
+            let dbUser = snapshot.val()
 
-            if (object) {
-              const updatedUser = {...this.state.user, ...object}
+            if (dbUser) {
+              dbUser = {...dbUser, uid: user.uid}
 
-              this.setState({user: updatedUser})
+              this.setState({user: dbUser})
+              localStorage.setItem('codelinkUser', JSON.stringify(dbUser))
             }
           })
         } else {
@@ -72,22 +70,9 @@ class App extends Component {
 
   loginWithGoogle = () => {
     const provider = new firebase.auth.GoogleAuthProvider()
-    firebase.auth().signInWithPopup(provider).then((result) =>  {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      // const token = result.credential.accessToken;
-      // The signed-in user info.
-      // const user = result.user;
-      // ...
-    }).catch((error)  => {
-      // Handle Errors here.
-      // const errorCode = error.code;
-      // const errorMessage = error.message;
-      // The email of the user's account used.
-      // const email = error.email;
-      // The firebase.auth.AuthCredential type that was used.
-      // const credential = error.credential;
-      // ...
-    });
+    firebase.auth().signInWithPopup(provider)
+    .then(({user}) => firebase.database().ref('users/' + user.uid).update({name: user.displayName}))
+    .catch(error  => console.log(error.message))
   }
 
   render() {

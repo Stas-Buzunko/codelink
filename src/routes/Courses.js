@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Button from 'material-ui/Button';
 import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
-import Input, { InputLabel } from 'material-ui/Input';
+// import Input, { InputLabel } from 'material-ui/Input';
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import _ from 'lodash'
@@ -13,13 +13,33 @@ import { FormControl } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 import Checkbox from 'material-ui/Checkbox';
 
-// add paths to new course
-// edit course
-// view assignments
+// add edit assignment
 
-// fix localStorage
+// 5. Student clicks on the assigned problem and is directed to the page to solve it.
+// 6. Student correctly solves the assigned problem and is directed back to the assignments view. 
+// 7. The word "COMPLETE" now shows up in the grid for the student for the solved problem.
+
+// student empty / submit / completed
+
+// assignment = open / closed
+// assignment either problem / text question
+// assignment click links to page to solve it (how do we track that?)
+
+
+// problem and paths fixes
+// add time tracking for assignments
+
+// logging events
 // pass course as prop
 // refactor enrolled fetching
+
+// add other people public paths
+
+// I can't do much more testing until I can 
+// - add problems to a path
+// - view problems on a path
+// - try to solve problems on a path as another user. 
+
 
 const styles = theme => ({
   container: {
@@ -62,7 +82,6 @@ class Courses extends Component {
       courseName: '',
       password: '',
       paths: [],
-      selectedPaths: new Set()
     }
   }
 
@@ -99,23 +118,29 @@ class Courses extends Component {
   }
 
   createCourse = () => {
-    const { courses, password, courseName, selectedPaths } = this.state
+    const { courses, password, courseName, editingKey } = this.state
     const { user } = this.props
 
     if (password && courseName) {
       const updates = {}
 
-      const courseKey = firebase.database().ref('courses').push().key
+      let courseKey
 
-      updates['courses/' + courseKey] = { name: courseName, owner: user.uid, isPublic: false, paths: selectedPaths }
+      if (editingKey) {
+        courseKey = editingKey
+      } else {
+        courseKey = firebase.database().ref('courses').push().key
+      }
+
+      updates['courses/' + courseKey] = { name: courseName, owner: user.uid, isPublic: false }
       updates['coursePasswords/' + courseKey] = password
 
       firebase.database().ref().update(updates)
-      .then(() => this.setState({password: '', courseName: '', showModal: false}))
+      .then(() => this.setState({password: '', courseName: '', showModal: false, editingKey: ''}))
     }
   }
 
-  closeModal = () => this.setState({showModal: false, courseName: '', selectedPaths: new Set()})
+  closeModal = () => this.setState({showModal: false, courseName: ''})
 
   renderEnrolledCourses = () => {
     const { publicCourses } = this.state
@@ -159,8 +184,9 @@ class Courses extends Component {
           {_.map(myCourses, (course, courseKey) =>
             <ListItem key={courseKey} className="table_row">
               <ListItemText style={{width:'30%'}} inset primary={course.name}/>
-              <Button raised className="table_row-edit">
-                <img alt="" src="http://via.placeholder.com/15x15" style={{marginRight:'5px'}}/>Edit
+              <Button raised className="table_row-edit"
+                onClick={() => this.setState({showModal: true, editingKey: courseKey, courseName: course.name})}>
+                Edit
               </Button>
             </ListItem>
           )}
@@ -171,13 +197,13 @@ class Courses extends Component {
 
   renderPublicCourses = () => {
     const { publicCourses } = this.state
+    const { user } = this.props
 
     if (!publicCourses) {
       return false
     }
 
     // filter with my current enrolled courses
-
     return (
       <div>
         <h3>Public courses available to join</h3>
@@ -186,7 +212,7 @@ class Courses extends Component {
             <ListItem key={courseKey} className="table_row">
               <ListItemText style={{width:'30%'}} inset primary={course.name}/>
               <Button raised className="table_row-edit" href={`/course/${courseKey}`}>
-                Join
+                { user.uid === course.owner ? 'View' : 'Join'}
               </Button>
             </ListItem>
           )}
@@ -201,9 +227,9 @@ class Courses extends Component {
   };
 
   render() {
-    const { showModal, courses, courseName, password, paths, selectedPaths } = this.state
+    const { showModal, courses, courseName, password, paths, editingKey } = this.state
     const { classes } = this.props
-console.log(selectedPaths)
+
     return (
       <div className="container">
         <div className="controllers">
@@ -215,7 +241,7 @@ console.log(selectedPaths)
         {this.renderPublicCourses()}
 
         <Dialog open={showModal} onClose={this.closeModal} aria-labelledby="simple-dialog-title">
-          <DialogTitle>New course</DialogTitle>
+          <DialogTitle>{editingKey ? 'Editing course' : 'New course'}</DialogTitle>
           <DialogContent>
             <form className={classes.container}>
               <TextField
@@ -235,24 +261,6 @@ console.log(selectedPaths)
                 margin="normal"
               />
             </form>
-            <FormControl className={classes.formControl}>
-              <InputLabel htmlFor="tag-multiple">Tag</InputLabel>
-              <Select
-                multiple
-                value={[...selectedPaths]}
-                onChange={e => this.setState({selectedPaths: new Set(e.target.value)})}
-                input={<Input id="tag-multiple" />}
-                renderValue={selected => selected.map(key => paths[key].title).join(', ')}
-                MenuProps={MenuProps}
-              >
-                {_.map(paths, (path, key) =>
-                  <MenuItem key={key} value={key}>
-                    <Checkbox checked={selectedPaths[key]} />
-                    <ListItemText primary={path.title} />
-                  </MenuItem>
-                )}
-              </Select>
-            </FormControl>
           </DialogContent>
           <DialogActions>
             <Button onClick={this.closeModal} color="primary">
@@ -263,8 +271,6 @@ console.log(selectedPaths)
             </Button>
           </DialogActions>
         </Dialog>
-
-
       </div>
     )
   }

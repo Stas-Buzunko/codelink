@@ -103,6 +103,7 @@ class AppFrame extends React.Component {
 
   render() {
     const { children, classes, onLogout, onLogin, user } = this.props;
+
     return (
       <div className={classes.root}>
         <div className={classes.appFrame}>

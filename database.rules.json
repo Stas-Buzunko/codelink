@@ -102,9 +102,20 @@
       }
     },
     "users": {
+      ".read": "auth != null",
       "$userKey": {
-        ".read": "auth !== null && auth.uid == $userKey",
-        ".write": "auth !== null && auth.uid == $userKey",
+        ".write": "auth != null && auth.uid == $userKey",
+      }
+    },
+    "assignments": {
+      "$courseKey": {
+        ".read": "auth != null && root.child('courses/' + $courseKey).exists() &&
+          root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
+        ".write": "auth != null && root.child('courses/' + $courseKey).exists() &&
+          root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
+        "$assignmentKey": {
+          ".read": "auth != null && root.child('courseMembers/' + $courseKey + '/' + auth.uid).exists()"
+        }
       }
     }
   }

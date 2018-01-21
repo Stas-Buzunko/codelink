@@ -8,8 +8,10 @@
     "lodash": "^4.17.4",
     "material-ui": "next",
     "material-ui-icons": "latest",
+    "moment": "^2.20.1",
     "react": "^16.1.1",
     "react-ace": "^5.7.0",
+    "react-day-picker": "^7.0.7",
     "react-dom": "^16.1.1",
     "react-markdown": "^3.1.0",
     "react-redux": "^5.0.6",
@@ -25,6 +27,7 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "coverage": "npm test -- --coverage",
-    "deploy-prod": "firebase deploy --project codelink-prod"
+    "deploy-prod": "firebase deploy --project codelink-prod",
+    "deploy": "npm run build && firebase deploy"
   }
 }
