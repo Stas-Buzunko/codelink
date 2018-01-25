@@ -119,14 +119,18 @@ class Paths extends Component {
     }
 
     const { uid } = this.props.user
+    const pathKey = firebase.database().ref('paths').push().key
 
-    firebase.database().ref('paths').push({
+    firebase.database().ref('paths/' + pathKey).set({
       title: pathName,
       owner: uid,
       assistants: null,
       isFeatured
     })
-    .then(() => this.setState({showModal: false, pathName: '', isFeatured: false}))
+    .then(() => {
+      this.setState({showModal: false, pathName: '', isFeatured: false})
+      firebase.database().ref('logged_events').push(`Path ${pathKey} has been created by ${uid}`)
+    })
   }
 
   addProblemToPath = () => {

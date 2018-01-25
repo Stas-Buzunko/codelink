@@ -136,7 +136,10 @@ class Courses extends Component {
       updates['coursePasswords/' + courseKey] = password
 
       firebase.database().ref().update(updates)
-      .then(() => this.setState({password: '', courseName: '', showModal: false, editingKey: ''}))
+      .then(() => {
+        this.setState({password: '', courseName: '', showModal: false, editingKey: ''})
+        firebase.database().ref('logged_events').push(`Course ${courseKey} has been created by ${user.uid}`)
+      })
     }
   }
 

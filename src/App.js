@@ -47,8 +47,10 @@ class App extends Component {
               localStorage.setItem('codelinkUser', JSON.stringify(dbUser))
             }
           })
+
+          firebase.database().ref('logged_events').push(`User ${user.uid} has been logged in.`)
         } else {
-          firebase.database().ref('Logs').push(`Anonymous user ${user.uid} has been logged in.`)
+          firebase.database().ref('logged_events').push(`Anonymous user ${user.uid} has been logged in.`)
           // this.props.login(uid, isAnonymous)
         }
       } else {

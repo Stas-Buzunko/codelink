@@ -73,6 +73,7 @@ class Course extends Component {
     updates['users/' + user.uid + '/courses/' + course.key] = true
 
     firebase.database().ref().update(updates)
+    .then(() => firebase.database().ref('logged_events').push(`User ${user.uid} enrolled for course ${course.key}`))
     .catch(e => e.code === 'PERMISSION_DENIED' && alert('Wrong password'))
   }
 
@@ -101,9 +102,13 @@ class Course extends Component {
 
   saveAssignment = assignment => {
     const { key } = this.state.course
+    const assignmentKey = firebase.database().ref('assignments/' + key).push().key
 
-    firebase.database().ref('assignments/' + key).push(assignment)
-    .then(() => this.setState({tab: 0}))
+    firebase.database().ref('assignments/' + key + '/' + assignmentKey).set(assignment)
+    .then(() => {
+      this.setState({tab: 0})
+      firebase.database().ref('logged_events').push(`Assignment ${assignmentKey} for course ${key}`)
+    })
   }
 
   render() {

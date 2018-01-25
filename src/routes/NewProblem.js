@@ -20,7 +20,9 @@ class NewProblem extends Component {
       return alert('Please name your problem')
     }
 
-    firebase.database().ref('problems').push({
+    const problemKey = firebase.database().ref('problems').push().key
+
+    firebase.database().ref('problems/' + problemKey).set({
       owner: user.uid,
       markdown: [state.markdownValues[0],state.markdownValues[2]],
       markdownSolution: state.markdownValues[1],
@@ -31,7 +33,10 @@ class NewProblem extends Component {
       lastEdited: firebase.database.ServerValue.TIMESTAMP
       // ipynb
     })
-    .then(() => history.push('/paths'))
+    .then(() => {
+      firebase.database().ref('logged_events').push(`Problem ${problemKey} has been created by ${user.uid}`)
+      return history.push('/paths')
+    })
   }
 
   render() {
