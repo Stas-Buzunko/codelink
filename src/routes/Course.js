@@ -1,11 +1,8 @@
 import React, { Component } from 'react'
 import Button from 'material-ui/Button';
-import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
-import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
 // import Input, { InputLabel } from 'material-ui/Input';
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
-import _ from 'lodash'
 import * as firebase from 'firebase'
 import Tabs, { Tab } from 'material-ui/Tabs';
 import AssignmentsTable from '../components/AssignmentsTable'

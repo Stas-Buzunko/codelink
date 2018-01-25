@@ -1,19 +1,17 @@
 import React, { Component } from 'react'
 import Button from 'material-ui/Button';
-import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import List, { ListItem, ListItemText } from 'material-ui/List';
 import Dialog, { DialogActions, DialogContent, DialogTitle } from 'material-ui/Dialog';
 // import Input, { InputLabel } from 'material-ui/Input';
 import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import _ from 'lodash'
 import * as firebase from 'firebase'
-import { MenuItem } from 'material-ui/Menu';
-import { FormControl } from 'material-ui/Form';
-// import { ListItemText } from 'material-ui/List';
-import Select from 'material-ui/Select';
-import Checkbox from 'material-ui/Checkbox';
 
+// add edit course
 // add edit assignment
+// /assignments/$courseKey/$assignmentKey/public/$studentKey.
+
 
 // 5. Student clicks on the assigned problem and is directed to the page to solve it.
 // 6. Student correctly solves the assigned problem and is directed back to the assignments view. 
@@ -40,6 +38,13 @@ import Checkbox from 'material-ui/Checkbox';
 // - view problems on a path
 // - try to solve problems on a path as another user. 
 
+// 1) solutions/$courseKey/$participantKey/$assignmentKey
+// 2) public data for assignments can go /assignment/assignmentKey/public/studentKey as this data will always be downloaded for a public view which is most viewed one
+// 3) when create assignment private true / false
+// 4) if text answer then COMPLETE or actual answer (only 2 options? or can write whatever he wants?)
+// 5) if codelink problem COMPLETE, or Passing/Failing
+// 6) instructor does 4 and 5 in public view
+
 
 const styles = theme => ({
   container: {
@@ -60,17 +65,6 @@ const styles = theme => ({
     maxWidth: 300,
   },
 });
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250,
-    },
-  },
-};
 
 class Courses extends Component {
   constructor(props) {
@@ -118,7 +112,7 @@ class Courses extends Component {
   }
 
   createCourse = () => {
-    const { courses, password, courseName, editingKey } = this.state
+    const { password, courseName, editingKey } = this.state
     const { user } = this.props
 
     if (password && courseName) {
@@ -230,7 +224,7 @@ class Courses extends Component {
   };
 
   render() {
-    const { showModal, courses, courseName, password, paths, editingKey } = this.state
+    const { showModal, courseName, password, editingKey } = this.state
     const { classes } = this.props
 
     return (

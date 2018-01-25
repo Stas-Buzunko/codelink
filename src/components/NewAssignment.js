@@ -1,5 +1,3 @@
-// save left
-
 import React, { Component } from 'react'
 import Button from 'material-ui/Button';
 import Input, { InputLabel } from 'material-ui/Input';
@@ -7,7 +5,6 @@ import TextField from 'material-ui/TextField';
 import { withStyles } from 'material-ui/styles';
 import _ from 'lodash'
 import * as firebase from 'firebase'
-import { MenuItem } from 'material-ui/Menu';
 import { FormControl, FormControlLabel } from 'material-ui/Form';
 import Select from 'material-ui/Select';
 import moment from 'moment'
@@ -106,7 +103,7 @@ class NewAssignment extends Component {
     const { selectedProblem, title, selectedDay, question, answer, isTextQuestion } = this.state
     const { onSubmit } = this.props
 
-    if (title && selectedDay && (!isTextQuestion && selectedProblem || isTextQuestion && question && answer)) {
+    if (title && selectedDay && ((!isTextQuestion && selectedProblem) || (isTextQuestion && question && answer))) {
       const assignment = {
         title,
         deadline: selectedDay.getTime(),
@@ -127,7 +124,7 @@ class NewAssignment extends Component {
   }
 
   render() {
-    const { title, selectedProblem, selectedDay, isTextQuestion, question, answer } = this.state
+    const { title, selectedDay, isTextQuestion, question, answer } = this.state
     const { classes } = this.props
 
     return (

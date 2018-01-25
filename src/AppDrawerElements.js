@@ -5,7 +5,7 @@ import Divider from 'material-ui/Divider'
 import { MenuItem } from 'material-ui/Menu'
 
 import StarIcon from 'material-ui-icons/Star'
-import { BrowserRouter, Route, Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 
 export const DrawerMenuItems = (

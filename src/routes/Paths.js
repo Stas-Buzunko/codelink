@@ -135,7 +135,7 @@ class Paths extends Component {
 
   addProblemToPath = () => {
     const { selectedPath, problemKey, paths } = this.state
-    const order = paths.pathProblems && Object.keys(paths.pathProblems).length + 1 || 0
+    const order = (paths.pathProblems && Object.keys(paths.pathProblems).length + 1) || 0
 
     firebase.database().ref('paths/' + selectedPath + '/pathProblems/' + problemKey)
     .set(order)
@@ -234,7 +234,7 @@ class Paths extends Component {
   }
 
   render() {
-    const { problems, paths, showModal, pathName, isFeatured, showPathModal, isLoadingProblems, isLoadingPaths, showAllProblems } = this.state
+    const { paths, showModal, pathName, isFeatured, showPathModal, isLoadingProblems, isLoadingPaths, showAllProblems } = this.state
     const { classes } = this.props
 
     if (isLoadingPaths || isLoadingProblems) {

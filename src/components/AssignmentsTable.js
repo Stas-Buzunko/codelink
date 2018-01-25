@@ -31,15 +31,6 @@ function createData(name, calories, fat, carbs, protein) {
   return { id: counter, name, calories, fat, carbs, protein };
 }
 
-const columnData = [
-  { id: 'name', numeric: false, disablePadding: true, label: 'Student', temp: { 'directions': 'blah', 'link': '' } },
-  { id: 'desert', numeric: false, disablePadding: true, label: 'Code Combat', temp: { 'directions': 'Enter your Code Combat name', 'link': 'https://www.codecombat.com' } },
-  { id: 'calories', numeric: false, disablePadding: false, label: 'Level One', temp: { 'directions': 'blah', 'link': '' } },
-  { id: 'fat', numeric: false, disablePadding: false, label: 'Team Name', temp: { 'directions': 'blah', 'link': '' } },
-  { id: 'carbs', numeric: false, disablePadding: false, label: 'Level Two', temp: { 'directions': 'blah', 'link': '' } },
-  { id: 'protein', numeric: false, disablePadding: false, label: 'Level Three', temp: { 'directions': 'blah', 'link': '' } },
-];
-
 class EnhancedTableHead extends React.Component {
   static propTypes = {
     numSelected: PropTypes.number.isRequired,
@@ -146,7 +137,7 @@ const toolbarStyles = theme => ({
 });
 
 let EnhancedTableToolbar = props => {
-  const { numSelected, classes, assignments } = props;
+  const { numSelected, classes } = props;
 
   return (
     <Toolbar
@@ -331,7 +322,7 @@ class EnhancedTable extends React.Component {
                     </TableCell>
                     <TableCell padding="none">{name}</TableCell>
                     {_.map(assignments, (assignment, assignmentKey) =>
-                      <TableCell>
+                      <TableCell key={assignmentKey}>
                         <Button raised>
                           Submit
                         </Button>

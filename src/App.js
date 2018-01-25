@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import * as firebase from 'firebase'
 import { login } from './actions'
 import { connect } from 'react-redux'
-import { BrowserRouter, Route, Link } from "react-router-dom"
+import { BrowserRouter, Route } from "react-router-dom"
 import Home from './routes/Home'
 import Statistics from './routes/Statistics'
 import Paths from './routes/Paths'
@@ -10,10 +10,8 @@ import Courses from './routes/Courses'
 import NewProblem from './routes/NewProblem'
 import EditProblem from './routes/EditProblem'
 import PrivateRoute from './utils/PrivateRoute'
-import TopMenu from './components/TopMenu'
 import AppFrame from './AppFrame'
 import Course from './routes/Course'
-import _ from 'lodash'
 
 class App extends Component {
   constructor(props) {
