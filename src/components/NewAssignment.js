@@ -34,14 +34,29 @@ const styles = theme => ({
 });
 
 class NewAssignment extends Component {
-  state = {
-    title: 'Change Assignment Name',
-    isTextQuestion: false,
-    selectedProblem: '',
-    selectedDay: moment().add(7, 'days').toDate(),
-    question: '',
-    answer: ''
+  constructor(props) {
+    super(props)
+
+    const { assignmentToEdit = {}} = props
+    const {
+      title,
+      isTextQuestion,
+      problem,
+      deadline,
+      question,
+      answer
+    } = assignmentToEdit
+
+    this.state = {
+      title: title || 'Change Assignment Name',
+      isTextQuestion: isTextQuestion || false,
+      selectedProblem: problem || '',
+      selectedDay: (deadline && new Date(deadline)) || moment().add(7, 'days').toDate(),
+      question: question || '',
+      answer: answer || ''
+    }
   }
+  
 
   componentDidMount() {
     const { uid } = this.props

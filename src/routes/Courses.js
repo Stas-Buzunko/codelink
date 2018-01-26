@@ -8,26 +8,14 @@ import { withStyles } from 'material-ui/styles';
 import _ from 'lodash'
 import * as firebase from 'firebase'
 
-// add edit course
-// add edit assignment
-// /assignments/$courseKey/$assignmentKey/public/$studentKey.
+// add public data
+// filter owner from members? how is he even there?
 
-
-// 5. Student clicks on the assigned problem and is directed to the page to solve it.
-// 6. Student correctly solves the assigned problem and is directed back to the assignments view. 
-// 7. The word "COMPLETE" now shows up in the grid for the student for the solved problem.
-
-// student empty / submit / completed
-
-// assignment = open / closed
-// assignment either problem / text question
 // assignment click links to page to solve it (how do we track that?)
-
 
 // problem and paths fixes
 // add time tracking for assignments
 
-// logging events
 // pass course as prop
 // refactor enrolled fetching
 
@@ -38,7 +26,6 @@ import * as firebase from 'firebase'
 // - view problems on a path
 // - try to solve problems on a path as another user. 
 
-// 1) solutions/$courseKey/$participantKey/$assignmentKey
 // 2) public data for assignments can go /assignment/assignmentKey/public/studentKey as this data will always be downloaded for a public view which is most viewed one
 // 3) when create assignment private true / false
 // 4) if text answer then COMPLETE or actual answer (only 2 options? or can write whatever he wants?)

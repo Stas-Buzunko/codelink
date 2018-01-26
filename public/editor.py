@@ -50,7 +50,6 @@ def run(*args):
     index = window.runToIndex
 
     values = window.state[key].values
-
     namespace = {}
 
     for x in range(0, index + 1):
@@ -69,3 +68,5 @@ def run(*args):
         value = output + '\n' + ('<completed in %6.2f ms>' % ((time.perf_counter() - t0) * 1000.0))
 
         window.updateResults[key](value, x, state)
+
+doc['run-button'].bind('click', run)

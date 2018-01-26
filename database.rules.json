@@ -84,13 +84,17 @@
     },
     "solutions": {
       ".read": "false",
-      "$userKey": {
-        ".read": "auth != null && $userKey == auth.uid",
-        ".write": "auth != null && $userKey == auth.uid",
-        "$pathKey": {
-          ".read": "auth != null && root.child('paths/' + $pathKey).exists() &&
-            root.child('paths/' + $pathKey + '/owner').val() == auth.uid
-          ",
+      "$courseKey": {
+        ".read": "auth != null && root.child('courses/' + $courseKey).exists() &&
+          root.child('courses/' + $courseKey + '/owner').val() == auth.uid",
+        "$userKey": {
+          ".read": "auth != null && $userKey == auth.uid",
+          "$assignmentKey": {
+            ".write": "auth != null && $userKey == auth.uid &&
+              root.child('courses/' + $courseKey).exists() &&
+              root.child('assignments/' + $courseKey + '/' + $assignmentKey).exists()
+            ",
+          }
         }
       }
     },

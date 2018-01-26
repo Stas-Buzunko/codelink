@@ -137,22 +137,6 @@ class CodeApp extends Component {
     window.updateResults[uniqueKey] = this.updateResults.bind(this)
   }
 
-  componentWillMount () {
-    const script = document.createElement("script");
-
-    script.async = true;
-    script.type = 'text/python3';
-    script.innerHTML = `
-from browser import document as doc, window
-from browser import html
-import editor
-
-doc['run-button'].bind('click', editor.run)
-`
-
-    document.body.appendChild(script);
-  }
-
   generateUrl = (isJSURL = false) => {
     const { values, markdownValues } = this.state
     const { showModelSolution = false } = this.props
@@ -363,7 +347,6 @@ doc['run-button'].bind('click', editor.run)
 
   updateResults = (value, index, error) => {
     const hasErrors = !error
-
     this.setState( state => ({
         results: [
           ...state.results.slice(0, index),

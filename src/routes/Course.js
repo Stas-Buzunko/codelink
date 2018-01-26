@@ -7,6 +7,7 @@ import * as firebase from 'firebase'
 import Tabs, { Tab } from 'material-ui/Tabs';
 import AssignmentsTable from '../components/AssignmentsTable'
 import NewAssignment from '../components/NewAssignment'
+import SolveAssginment from '../components/SolveAssginment'
 
 class Course extends Component {
   state = {
@@ -14,15 +15,19 @@ class Course extends Component {
     password: '',
     tab: 0,
     assignments: {},
-    students: []
+    students: [],
+    assignmentToEdit: {},
+    editingKey: '',
+    isSolvingProblem: false
   }
 
   componentDidMount() {
-    const { params } = this.props.match
+    const { user, match, history } = this.props
+    const { params } = match
 
     if (!params || !params.id) {
       // no id
-      return this.props.history.push('/courses')
+      return history.push('/courses')
     }
 
     firebase.database().ref('courses/' + params.id).once('value')
@@ -30,6 +35,24 @@ class Course extends Component {
       const course = snapshot.val()
 
       if (course) {
+        const isOwner = course.owner === user.uid
+        let ref
+        if (isOwner) {
+          // if owner = download all solutions and display in instructor view
+          ref = firebase.database().ref('solutions/' + params.id)
+        } else {
+          // if not owner, download user solution
+          ref = firebase.database().ref('solutions/' + params.id + '/' + user.uid)
+        }
+
+        ref.on('value', solutionsSnap => {
+          const solutions = solutionsSnap.val()
+
+          if (solutions) {
+            this.setState({solutions})
+          }
+        })
+
         if (course.courseMembers) {
           const promises = Object.keys(course.courseMembers).map(studentKey =>
             firebase.database().ref('users/' + studentKey).once('value')
@@ -74,21 +97,23 @@ class Course extends Component {
     .catch(e => e.code === 'PERMISSION_DENIED' && alert('Wrong password'))
   }
 
-  editAssignment = () => {
-    // 
+  editAssignment = assignmentKey => {
+    const { assignments } = this.state
+
+    this.setState({assignmentToEdit: assignments[assignmentKey], editingKey: assignmentKey, tab: 1})
   }
 
   renderContent = () => {
     const { uid } = this.props.user 
-    const { tab, course, assignments, students } = this.state
+    const { tab, course, assignments, students, assignmentToEdit, solutions } = this.state
     let view
 
     switch (tab) {
       case 0:
-        view = <AssignmentsTable editAssignment={this.editAssignment} students={students} instructorView assignments={assignments} />
+        view = <AssignmentsTable solutions={solutions} editAssignment={this.editAssignment} students={students} instructorView assignments={assignments} />
         break;
       case 1:
-        view = <NewAssignment onSubmit={this.saveAssignment} uid={uid} courseId={course.key} />
+        view = <NewAssignment onSubmit={this.saveAssignment} uid={uid} courseId={course.key} assignmentToEdit={assignmentToEdit} />
         break;
       default:
         view = <AssignmentsTable students={students} assignments={assignments} />
@@ -98,19 +123,26 @@ class Course extends Component {
   }
 
   saveAssignment = assignment => {
-    const { key } = this.state.course
-    const assignmentKey = firebase.database().ref('assignments/' + key).push().key
+    const { editingKey, course } = this.state
+    const { key } = course
+    let assignmentKey
+
+    if (editingKey) {
+      assignmentKey = editingKey
+    } else {
+      assignmentKey = firebase.database().ref('assignments/' + key).push().key
+    }
 
     firebase.database().ref('assignments/' + key + '/' + assignmentKey).set(assignment)
     .then(() => {
-      this.setState({tab: 0})
+      this.setState({tab: 0, editingKey: '', assignmentToEdit: {}})
       firebase.database().ref('logged_events').push(`Assignment ${assignmentKey} for course ${key}`)
     })
   }
 
   render() {
-    const { course, password, tab } = this.state
-    const { classes, user, match, assignments, students } = this.props
+    const { course, password, tab, isSolvingProblem, students, assignments, assignmentKey, solutions } = this.state
+    const { classes, user, match } = this.props
 
     if (!course) {
       return (
@@ -123,12 +155,20 @@ class Course extends Component {
 
     return (
       <div>
-        <h4>{course.name}</h4>
+        <h4>{course.name} {isSolvingProblem &&
+          <span>
+            {assignments[assignmentKey].title}
+
+            <Button onClick={() => this.setState({isSolvingProblem: false, assignmentKey: ''})}>
+              Back
+            </Button>
+          </span>
+        }</h4>
         {isOwner
           ? <div>
               <Tabs
                 value={tab}
-                onChange={(e, i) => this.setState({tab: i})}
+                onChange={(e, i) => this.setState({tab: i, assignmentToEdit: {}, editingKey: ''})}
                 indicatorColor="primary"
                 textColor="primary"
               >
@@ -152,7 +192,18 @@ class Course extends Component {
                   Enter password
                 </Button>
               </form>
-            : <AssignmentsTable students={students} assignments={assignments} />
+            : isSolvingProblem
+              ? <SolveAssginment
+                  assignment={assignments[assignmentKey]}
+                  courseKey={course.key}
+                  studentKey={user.uid}
+                  assignmentKey={assignmentKey}
+                  onSolve={() => this.setState({isSolvingProblem: false, assignmentKey: ''})} />
+              : <AssignmentsTable
+                  solutions={solutions}
+                  students={students}
+                  assignments={assignments}
+                  onSubmit={(key) => this.setState({isSolvingProblem: true, assignmentKey: key})} />
         }
       </div>
     )

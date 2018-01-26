@@ -23,13 +23,7 @@ import FilterListIcon from 'material-ui-icons/FilterList';
 import _ from 'lodash'
 import moment from 'moment'
 import Button from 'material-ui/Button';
-
-
-let counter = 0;
-function createData(name, calories, fat, carbs, protein) {
-  counter += 1;
-  return { id: counter, name, calories, fat, carbs, protein };
-}
+import ModeEdit from 'material-ui-icons/ModeEdit'
 
 class EnhancedTableHead extends React.Component {
   static propTypes = {
@@ -98,11 +92,15 @@ class EnhancedTableHead extends React.Component {
                   direction={order}
                   onClick={this.createSortHandler(assignmentKey)}
                 >
-                  Assignment {assignment.title}
+                  Assignment {assignment.title} 
                 </TableSortLabel>
               </Tooltip>
-              <div>by {moment(assignment.deadline, 'x').format('YYYY-MM-DD')}</div>
-              {false && instructorView && <a onClick={() => editAssignment(assignmentKey)} target="_blank">edit</a>}
+              <div>
+                by {moment(assignment.deadline, 'x').format('YYYY-MM-DD')}
+                {instructorView &&
+                  <ModeEdit style={{height: '15px', width: '15px'}} onClick={() => editAssignment(assignmentKey)} />
+                }
+              </div>
             </TableCell>
           )}
         </TableRow>
@@ -200,21 +198,7 @@ class EnhancedTable extends React.Component {
       order: 'asc',
       orderBy: 'name',
       selected: [],
-      data: [
-        createData('Chris', 'profboesch', '', 'Team 1', '', ''),
-        createData('Doug', 'deathknight', 'COMPLETE', 'Team 1', 'COMPLETE'),
-        createData('Ellen', 'cookie', '', 'Team 1', ''),
-        createData('Fred', 'fruit', 'COMPLETE', 'Team 1', 'COMPLETE'),
-        createData('Ginger', 'awesome1', 'COMPLETE', 'Team 2', 'COMPLETE'),
-        createData('Halley', 'hawk', 'COMPLETE', 'Team 2', ''),
-        createData('Ivan', 'knight234', '', 'Team 3', ''),
-        createData('Joey', 'faster', '', 'Team 3', ''),
-        createData('Kate', 'renal', '', 'Team 3', ''),
-        createData('Larry', 'crooked', '', 'Team 3', ''),
-        createData('Mary', 'party1', '', '', ''),
-        createData('Ned', 'slight', '', '', ''),
-        createData('Oran', 'gogo', '', '', ''),
-      ].sort((a, b) => (a.name < b.name ? -1 : 1)),
+      data: [],
       page: 0,
       rowsPerPage: 5,
     };
@@ -282,7 +266,7 @@ class EnhancedTable extends React.Component {
   isSelected = id => this.state.selected.indexOf(id) !== -1;
 
   render() {
-    const { classes, assignments, students } = this.props;
+    const { classes, assignments, students, instructorView, editAssignment, onSubmit, solutions } = this.props;
     const { data, order, orderBy, selected, rowsPerPage, page } = this.state;
     const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
@@ -296,9 +280,11 @@ class EnhancedTable extends React.Component {
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}
+              instructorView={instructorView}
               onSelectAllClick={this.handleSelectAllClick}
               onRequestSort={this.handleRequestSort}
               rowCount={data.length}
+              editAssignment={editAssignment}
             />
             <TableBody>
               {students.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(user => {
@@ -309,8 +295,8 @@ class EnhancedTable extends React.Component {
                 return (
                   <TableRow
                     hover
-                    onClick={event => this.handleClick(event, studentKey)}
-                    onKeyDown={event => this.handleKeyDown(event, studentKey)}
+                    // onClick={event => this.handleClick(event, studentKey)}
+                    // onKeyDown={event => this.handleKeyDown(event, studentKey)}
                     role="checkbox"
                     aria-checked={isSelected}
                     tabIndex={-1}
@@ -323,9 +309,17 @@ class EnhancedTable extends React.Component {
                     <TableCell padding="none">{name}</TableCell>
                     {_.map(assignments, (assignment, assignmentKey) =>
                       <TableCell key={assignmentKey}>
-                        <Button raised>
-                          Submit
-                        </Button>
+                        {
+                          assignment.deadline < (new Date()).getTime()
+                            ? '-'
+                            : solutions && solutions[studentKey] && solutions[studentKey][assignmentKey]
+                              ? solutions[studentKey][assignmentKey] === true
+                                ? 'COMPLETED'
+                                : solutions[studentKey][assignmentKey]
+                              : <Button raised onClick={() => onSubmit(assignmentKey)}>
+                                  Submit
+                                </Button>
+                        }
                       </TableCell>
                     )}
                   </TableRow>
